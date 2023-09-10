@@ -94,64 +94,45 @@ Element * Element::setNext(Element * direction)              // Set Data Pointer
 
 Element Element::operator+(const Element& other) const {
     int newLength = strlen(data) + strlen(other.data);      // Calculate the new length
-
     char* newData = new char[newLength + 1];                // Allocate memory for the new data
-
     int i = 0;
     for (; data[i] != '\0'; ++i) {                          // Copy the existing data to the new data
         newData[i] = data[i];
     }
-
     int j = 0;
     for (; other.data[j] != '\0'; ++j) {                    // Append the other.data to the new data
         newData[i + j] = other.data[j];
     }
-
     newData[i + j] = '\0';                                  // Null-terminate the new data
-
     Element result(newData);                                // Create a new Element object with the concatenated data
-
     delete[] newData;                                       // Free the memory allocated for newData
-
     return result;
 }
 
 Element Element::operator+(const char* rvalue) {
     Element result(*this);                                  // Create a new Element to store the result
-
     int currentLength = strlen(data);                       // Calculate the length of the current data and the length of the right-hand value
     int rhsLength = strlen(rvalue);
-
     char* combinedData = new char[currentLength + rhsLength + 1];   // Allocate memory for the combined data
-
     strcpy(combinedData, data);                             // Copy the current data and the right-hand value into the combinedData
     strcpy(combinedData + currentLength, rvalue);
-
     delete[] result.data;                                   // Update the result's data
     result.data = combinedData;
-
     result.totalMemUsed = sizeof(result) + (currentLength + rhsLength + 1) * sizeof(char);  // Update the memory usage
-
     return result;
 }
 
 Element Element::operator+(char rvalue) {
     Element result(*this);                                  // Create a new Element to store the result
-
     int currentLength = strlen(data);                       // Calculate the length of the current data (excluding the null terminator)
-
                                                             // Allocate memory for the combined data
     char* combinedData = new char[currentLength + 2];       // +2 for the current data and the new character
-
     strcpy(combinedData, data);                             // Copy the current data and append the right-hand character
     combinedData[currentLength] = rvalue;
     combinedData[currentLength + 1] = '\0';
-
     delete[] result.data;                                   // Update the result's data
     result.data = combinedData;
-
     result.totalMemUsed = sizeof(result) + (currentLength + 2) * sizeof(char);  // Update the memory usage
-
     return result;
 }
 
@@ -160,7 +141,6 @@ Element Element::operator+(char rvalue) {
 char* Element::intToString(int value) {
     char* buffer = new char[12];    // Allocate memory for the string
     int len = 0;
-
     if (value == 0) {               // Handle the case of 0 separately
         buffer[len++] = '0';
     } else {
@@ -186,31 +166,22 @@ char* Element::intToString(int value) {
             buffer[len - i - 1] = temp;
         }
     }
-
     buffer[len] = '\0';                     // Null-terminate the string
-
     return buffer;
 }
 
 Element Element::operator+(int rvalue) {
     char* intValue = intToString(rvalue);       // Convert the integer to a string
-
     Element result(*this);                      // Create a new Element to store the result
-
     result += intValue;                         // Call the existing += operator for C-style strings to append the right-hand value
-
     delete[] intValue;                          // Free the memory allocated for the converted string
-
     return result;
 }
 
 Element& Element::operator+=(int rvalue) {
     char* intValue = intToString(rvalue);      // Convert the integer to a string
-
     *this += intValue;                         // Call the existing += operator for C-style strings to append the right-hand value
-
     delete[] intValue;                         // Free the memory allocated for the converted string
-
     return *this;
 }
 
@@ -218,21 +189,16 @@ Element& Element::operator+=(const char* rvalue)
 {
     if (rvalue) {
         int newLength = strlen(data) + strlen(rvalue);     // Calculate the new length
-        
         char* newData = new char[newLength + 1];           // Allocate memory for the new data
-        
         int i = 0;
         for (; data[i] != '\0'; ++i) {                     // Copy the existing data to the new data
             newData[i] = data[i];
         }
-        
         int j = 0;
         for (; rvalue[j] != '\0'; ++j) {                   // Append the new data
             newData[i + j] = rvalue[j];
         }
-        
         newData[i + j] = '\0';                             // Null-terminate the new data
-        
         delete[] data;                                     // Free the old data and set the new data
         data = newData;
     }
