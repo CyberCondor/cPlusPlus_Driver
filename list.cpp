@@ -504,38 +504,38 @@ bool List::contains(const Element & target)
     bool found    = false;
     bool foundOne = false;
     int  position = 0;
-    
-    while (curr->getNext() != head) {
-        const char* data       = curr->getData();
-        const char* searchData = target.getData();
-        int i = 0;
-        int j = 0;
-        while (data[i] != '\0') {
-       
-            if (data[i] == searchData[j]) {
-                j++;
-                if (searchData[j] == '\0') {
-                    found = true;
-                    break;
+    if (head != nullptr) {
+        while (curr->getNext() != head) {
+            const char* data       = curr->getData();
+            const char* searchData = target.getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+           
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        found = true;
+                        break;
+                    }
                 }
+                i++;
             }
-            i++;
-        }
-        if (found) {
-            if (foundOne == false) {
-                foundOne = true;
-                std::cout << "-------------------------*BEGIN List CONTAINS: " << target << "*------------------------" << std::endl;
-                std::cout << "Matches found for: " << target << std::endl;
-                std::cout << std::endl;
+            if (found) {
+                if (foundOne == false) {
+                    foundOne = true;
+                    std::cout << "-------------------------*BEGIN List CONTAINS: " << target << "*------------------------" << std::endl;
+                    std::cout << "Matches found for: " << target << std::endl;
+                    std::cout << std::endl;
+                }
+                std::cout << "Position: " << position << "\tData:" << data << std::endl;
+                found = false; // reset fount for next.
             }
-            std::cout << "Position: " << position << "\tData:" << data << std::endl;
-            found = false; // reset fount for next.
+            
+            curr = curr->getNext();
+            position++;
         }
-        
-        curr = curr->getNext();
-        position++;
-    }
-    
+    } 
     if (foundOne) {
         std::cout << "-------------------------*END List CONTAINS: " << target << "*------------------------" << std::endl;
     }
@@ -588,8 +588,6 @@ bool List::contains(Element* target)
         std::cout << "-------------------------*END List CONTAINS: " << *target << "*------------------------" << std::endl;
     }
     delete target;
-
-
     return foundOne;   
 }
 
