@@ -55,3 +55,6 @@ std::ostream & operator << (std::ostream &, const Element &); // Stream Insertio
 std::istream & operator >> (std::istream &, Element &);       // Stream Extraction
 
 int strcmp(const char *, const char *);                       // Standard Element Compare
+
+char toUpper(char);
+char toLower(char);
