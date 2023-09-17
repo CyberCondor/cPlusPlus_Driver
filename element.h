@@ -1,13 +1,11 @@
 #pragma once
 #include <iostream>
 
-#define MEM_LIMIT 200000000                                 // 200MB
-
 class Element
 {
 private:
-    char    * data;                                          // Single character
-    Element * next;                                          // Forward link
+    char    * data;                                          // Points to first char in array
+    Element * next;                                          // Forward link to next char in array
     size_t    totalMemUsed;                                  // Make program self-aware of how much memory it's using
 public:	 
     ~Element();                                              // Destructor
@@ -15,14 +13,15 @@ public:
     Element(const char*);                                    // Parameterized constructor
     Element(Element*);                                       // Parameterized constructor
     Element(const Element&);                                 // Copy Constructor
-    int strlen(const char *) const;                          // Get size of Element for dynamic runtime
+
+    int strlen(const char *) const;                          // Get size of data for dynamic runtime
     const char & operator [](int) const;                     // Value Accessor Subscript Operator
     char & operator [](int);                                 // Reference Mutator Subscript Operator
     void strcpy(char*,const char*);                          // Used for Dynamic Copy Construction
 
-    Element *  setNext(Element *);                                 // Setter
+    Element *  setNext(Element *);                                 // Set pointer to next
     
-    inline const char    * getData() const {return data;};         // Data Accessor 
+    inline const char    * getData() const {return data;};         // Data Accessor
     inline       char    * getData()       {return data;};         // Data Accessor
     inline const Element * getNext() const {return next;};         // Get Next
     inline       Element * getNext()       {return next;};         // Get Next
@@ -35,22 +34,22 @@ public:
     inline int    length()           {return strlen(this->data);}; // Length Accessor - excludes nullbyte in length
     inline size_t getMemUsed() const {return totalMemUsed;};       // Mem Size Accessor  
 
-    char * intToString(int); 
+    char * intToString(int);                                       // Custom Int to String function - used to append an int to a Element 'string'
 
-    Element   operator+ (const Element&) const; 
-    Element   operator+ (const char*); 
-    Element   operator+ (      char ); 
-    Element   operator+ (      int  ); 
-    Element & operator+=(      int  ); 
-    Element & operator+=(const char*); 
+    Element   operator+ (const Element&) const;                    // Append and Element to Element 
+    Element   operator+ (const char*);                             // Append a char to Element
+    Element   operator+ (      char );                             // Append a char to Element
+    Element   operator+ (      int  );                             // Append an Int to Element
+    Element & operator+=(      int  );                             // Append an Int to Element
+    Element & operator+=(const char*);                             // Append a char to Element
 };
-
-bool operator == (const Element &, const Element &);          // Relational Operator
-bool operator >  (const Element &, const Element &);          // Relational Operator
-bool operator != (const Element &, const Element &);          // Relational Operator
-bool operator <= (const Element &, const Element &);          // Relational Operator
-bool operator >= (const Element &, const Element &);          // Relational Operator
-bool operator <  (const Element &, const Element &);          // Relational Operator
+                                                              // Operator Overload Functions
+bool operator == (const Element &, const Element &);          // Equality                  Operator
+bool operator != (const Element &, const Element &);          // Inequality                Operator
+bool operator >  (const Element &, const Element &);          // Greater Than              Operator
+bool operator >= (const Element &, const Element &);          // Greater Than or Equal to  Operator
+bool operator <= (const Element &, const Element &);          // Less Than or Equal to     Operator
+bool operator <  (const Element &, const Element &);          // Less Than                 Operator
 
 std::ostream & operator << (std::ostream &, const Element &); // Stream Insertion
 std::istream & operator >> (std::istream &, Element &);       // Stream Extraction
