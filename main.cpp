@@ -20,11 +20,11 @@ int main(int argc, char **argv, char **envp) {
 
     for(auto idx = 0; idx < argc; idx++)                  // For the Argument Count 
     {                                                     // Put the parameterized arguments into an organized list
-        list.insert(Element(argv[idx]));                  // And the Sorted Insertion Mutator for previously created list
+        list.insert(Element(argv[idx]));                             // And the Sorted Insertion Mutator for previously created list
     }
     for(auto idx = 0; envp[idx] != nullptr; idx++)        // Until the end of environment variables (nullptr)
     {                                                     // Put the environment variables into an organized list 
-        list.insert(Element(envp[idx]));                  // And the Sorted Insertion Mutator for previously created list
+        list.insert(Element(envp[idx]));                             // And the Sorted Insertion Mutator for previously created list
     }
 
     list.print();
@@ -57,33 +57,31 @@ int main(int argc, char **argv, char **envp) {
 
     list.printReverse();
 
-    list.find(Element("Item A"));
+    list.findMatch(Element("Item A"));
     list.remove(23);
-    if (!(list.find(Element("Item A")))) {
+    if (!(list.findMatch(Element("Item A")))) {
         std::cout<<"not found!"<<std::endl;
     }
 
     list.print();
 
-    if (list.wildcardMatch(Element("*9"))) {
+    if (list.wildcardSearch(Element("*9"))) {
         std::cout << "yes this exists- WILDCARDmATCH" << std::endl;
     }
     
-    if (list.contains(Element("tem"))) {
+    if (list.containsSequence(Element("tem"))) {
         std::cout << "yes tem exists - CONTAINS" << std::endl;
     }
 
 
-    if (list.contains(Element("21"))) {
+    if (list.containsSequence(Element("21"))) {
         std::cout << "yes 21 exists - CONTAINS" << std::endl;
     }
 
-    list.contains(Element("condor"));
-    list.contains(Element("z"));
-    list.contains(Element("2"));
-    list.contains(Element("9"));
-    list.contains(Element("dor"));
-    list.contains(Element("CyberCondor"));
+    list.containsSequence(Element("z"));
+    list.containsSequence(Element("2"));
+    list.containsSequence(Element("9"));
+    list.containsSequence(Element("CyberCondor"));
 
     for (int i = 0; i < 105; i++) {
         Element e = "item";
@@ -91,15 +89,27 @@ int main(int argc, char **argv, char **envp) {
         list.remove(e);    
     }
 
-    if (list.contains(new Element("tem"))) {
+    if (list.containsSequence(new Element("tem"))) {
         std::cout << "yes tem exists POINTER USED - CONTAINS" << std::endl;
     }
 
     list.insert(Element(p + "tailpod" + i + "pong" + f + p + i + f));
 //    list.insert(Element("tailpod" + i + "ping" + "pong" + f + p + i + f)); make this work!
-    list.getDeets();
 
-    list.print();
+    list.insert(new Element("cybercondor wrote this code"));
+    list.insert(Element("CyberCondor wrote this code"));
+    list.containsSequence(Element("cdor"));
+    list.containsSequence(Element("lcv"));
+    list.containsSequence(Element("cyber"));
+    list.findMatch(Element("CyberCondor wrote this code"));
+    list.findMatch(Element("cybercondor"));
+
+
+    list.insert(Element("Who is CyberCondor"));
+    list.wildcardSearch(Element("*CyberCondor*"));
+    list.wildcardSearch(Element("*Cybercondor"));
+    list.wildcardSearch(Element("CyberCondor*"));
+    list.wildcardSearch(Element("*Cyber*"));
 
     return 0;
 }
