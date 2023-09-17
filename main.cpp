@@ -104,12 +104,14 @@ int main(int argc, char **argv, char **envp) {
     list.findMatch(Element("CyberCondor wrote this code"));
     list.findMatch(Element("cybercondor"));
 
-
     list.insert(Element("Who is CyberCondor"));
     list.wildcardSearch(Element("*CyberCondor*"));
     list.wildcardSearch(Element("*Cybercondor"));
     list.wildcardSearch(Element("CyberCondor*"));
     list.wildcardSearch(Element("*Cyber*"));
 
+    list.containsSequence_i(Element("cdor"));
+    list.containsSequence_i(Element("cDoR"));
+    
     return 0;
 }
