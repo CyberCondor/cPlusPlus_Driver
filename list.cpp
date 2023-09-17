@@ -14,7 +14,7 @@ List::List(Element * value)                          // Param Constructor
     totalMemUsed += value->getMemUsed();
 }
 
-List::~List()                                         // Destructor!
+List::~List()                                        // Destructor!
 {
     if (head != nullptr)
     {
@@ -30,7 +30,37 @@ List::~List()                                         // Destructor!
         head = nullptr;
     }
 }
-void List::clear()                                     // Deallocate memory of the list
+
+List::List(const List &other)                        // Copy Constructor 
+{                               
+    // Initialize head and curr pointers for the new list
+    head = nullptr;
+    curr = nullptr;
+
+    // Copy each element from the other list to the new list
+    if (other.head != nullptr) {
+        Element *otherCurr = other.head;
+
+        do
+        {   // Create a new Element instance with the data from 'otherCurr'
+            Element *newNode = new Element(*otherCurr);                       
+            if (head == nullptr) {            // Insert the new node into the new list
+                head = newNode;
+                newNode->setNext(head);
+            } else {
+                curr->setNext(newNode);
+                newNode->setNext(head);
+            }
+
+            curr = newNode;                   // Update curr pointer
+
+            otherCurr = otherCurr->getNext(); // Move to the next node in 'other'
+        } while (otherCurr != other.head);
+        totalMemUsed = other.getMemUsed();
+    }
+}
+
+void List::clear()                                   // Clear a List
 {
     if (head != nullptr) {
         Element *curr = head;
@@ -46,36 +76,14 @@ void List::clear()                                     // Deallocate memory of t
     }
 }
 
-List::List(const List &other)                           // Copy Constructor 
-{                               
-    // Initialize head and curr pointers for the new list
-    head = nullptr;
-    curr = nullptr;
-
-    // Copy each element from the other list to the new list
-    if (other.head != nullptr) {
-        Element *otherCurr = other.head;
-
-        do
-        {                                            // Create a new Element instance with the data from 'otherCurr'
-            Element *newNode = new Element(*otherCurr);                       
-            if (head == nullptr) {                   // Insert the new node into the new list
-                head = newNode;
-                newNode->setNext(head);
-            } else {
-                curr->setNext(newNode);
-                newNode->setNext(head);
-            }
-
-            curr = newNode; // Update curr pointer
-
-            otherCurr = otherCurr->getNext(); // Move to the next node in 'other'
-        } while (otherCurr != other.head);
-        totalMemUsed = other.getMemUsed();
-    }
-}
-
-void List::insert(Element * target, int pos)   // Insert target @ position
+/* This function inserts an Element at a specfied position.
+ * Insert target @ position
+ *
+ * Function: insert
+ * Param:  Element *, int, value and position to insert into List
+ * return: void
+ */
+void List::insert(Element * target, int pos)   
 {
     if(head == nullptr) {      // If no List 
         head = target;		   // Create List
@@ -117,6 +125,14 @@ void List::insert(Element * target, int pos)   // Insert target @ position
     }
 }
 
+/* This function is a sorted insertion mutator.
+ * Used to insert an Element to the list.
+ * No duplicate Elements are allowed in this insertion.
+ * 
+ * Function: insert
+ * Param:  Element *, value to insert into list
+ * return: bool
+ */
 bool List::insert(Element * value)   // Sorted Insertion Mutator
 {
     int  position = 0;
@@ -153,13 +169,28 @@ bool List::insert(Element * value)   // Sorted Insertion Mutator
     return true;	
 }
 
-void List::insert(const Element &target, int pos)   // Insert target @ position
+/* This function delegates insert @ position to the main insertion function
+ * Insert target @ position
+ *
+ * Function: insert
+ * Param:  Element &, int, value and position to insert into List
+ * return: void
+ */
+void List::insert(const Element &target, int pos) 
 {
     Element *value = new Element(target);  // Create a copy of the target Element
     insert(value, pos);                    // Delegate to the existing insert function
 }
 
-bool List::insert(const Element &valueRef)         // Sorted Insertion Mutator
+/* This function is a sorted insertion mutator.
+ * Used to insert an Element to the list.
+ * No duplicate Elements are allowed in this insertion.
+ * 
+ * Function: insert
+ * Param:  Element &, value to insert into list
+ * return: bool
+ */
+bool List::insert(const Element &valueRef)         
 {
     int  position = 0;
     bool found    = false;
@@ -197,19 +228,26 @@ bool List::insert(const Element &valueRef)         // Sorted Insertion Mutator
     return true;	
 }
 
-void List::remove(int pos)         // Position Deletion Mutator
+/* This function deletes an Element at a specified position in the List
+ * Position Deletion Mutator
+ * 
+ * Function: getDeets
+ * Param:  int, position of Element to remove from List
+ * return: void
+ */
+void List::remove(int pos) 
 {
     if (head == nullptr || size() == 0) {
         std::cout << "Nothing to remove." << std::endl;
         return; // Exit the method without doing anything
     }
-    if (size() == 1) {
+    if (size() == 1) {  // If head.next points to self, nothing to traverse
         delete head;
         head = nullptr; 
         std::cout << "Delete Head." << std::endl;
         return;
     }
-    if(head != nullptr) // If no List, nothing to remove.
+    if(head != nullptr) // If no List, nothing to remove. Redundant from above check.
     {
         curr = head;
         Element * prev = nullptr;
@@ -256,7 +294,14 @@ void List::remove(int pos)         // Position Deletion Mutator
     }
 }
 
-void List::remove(Element * target)  // Specific Deletion Mutator
+/* This function deletes an Element from the list by value
+ * Specific Deletion Mutator -> Delegates to Position Deletion Mutator.^
+ *
+ * Function: remove
+ * Param:  Element *, value of Element to remove from List 
+ * return: bool
+ */
+bool List::remove(Element * target)
 {
     int position = 0;
     if(head != nullptr) { // If no List, nothing to remove.
@@ -268,7 +313,7 @@ void List::remove(Element * target)  // Specific Deletion Mutator
                 std::cout << "Removed " << target->getData() << " from the list.\n";
                 remove(position);
                 delete target;
-                return;
+                return true;
             }
             curr = curr->getNext();
             position++;
@@ -276,8 +321,17 @@ void List::remove(Element * target)  // Specific Deletion Mutator
     }
     std::cout << "Target '" << target->getData() << "' NOT FOUND.\n";
     delete target;
+    return false;
 }
-void List::remove(Element target)  // Specific Deletion Mutator
+
+/* This function deletes an Element from the list by value
+ * Specific Deletion Mutator -> Delegates to Position Deletion Mutator.^
+ *
+ * Function: remove
+ * Param:  Element , value of Element to remove from List 
+ * return: bool
+ */
+bool List::remove(Element target)
 {
     int position = 0;
     if(head != nullptr) { // If no List, nothing to remove.
@@ -288,16 +342,26 @@ void List::remove(Element target)  // Specific Deletion Mutator
             {
                 std::cout << "Removed " << target.getData() << " from the list.\n";
                 remove(position);	
-                return;
+                return true;
             }
             curr = curr->getNext();
             position++;
         }
     }
     std::cout << "Target '" << target.getData() << "' NOT FOUND.\n";
+    return false;
 }
 
-int List::size() const            // Size Accessor
+/* This function is a size accessor. It returns the size of the list.
+ * If list is empty, returns 0, else returns size of the list.
+ * Suggest re-writing this into a part of the class that is always tracked.*
+ *
+ *
+ * Function: size
+ * Param:  null
+ * return: int
+ */
+int List::size() const
 {
     int result = 1;
     if (head != nullptr) {
@@ -312,7 +376,13 @@ int List::size() const            // Size Accessor
     return result;
 }  
 
-void List::getDeets()            // Get detailed information about the memory of the list 
+/* This function prints detailed information about the memory of the List to standard out
+ * 
+ * Function: getDeets
+ * Param:  null
+ * return: void
+ */
+void List::getDeets() 
 { 
     if (head == nullptr) {
         std::cout << "List is empty." << std::endl;
@@ -368,6 +438,12 @@ void List::getDeets()            // Get detailed information about the memory of
     std::cout << "-------------------------*END LIST DETAILS*-------------------------"             << std::endl;
 }
 
+/* This function prints the List to standard out
+ * 
+ * Function: print
+ * Param:  null
+ * return: void
+ */
 void List::print()
 { 
     if (head == nullptr) {
@@ -393,6 +469,12 @@ void List::print()
     std::cout << "-------------------------*END FORWARD LIST*-------------------------" << std::endl;
 }
 
+/* This function uses recursion to print the List to standard out in reverse
+ * 
+ * Function: printReverseHelper
+ * Param:  the next node, the end of the list, if reached begining, where are we at in list, index size for column formatting
+ * return: void
+ */
 void printReverseHelper(Element *node, Element *tail, bool isFirstNode, int &index, int &maxIndexSize)
 {
     int indexSize = static_cast<int>(log10(abs(index))) + 1;
@@ -418,6 +500,13 @@ void printReverseHelper(Element *node, Element *tail, bool isFirstNode, int &ind
     std::cout << " -Data: " << node->getData() << std::endl;
 }
 
+/* This function prints detailed information about the memory of the list to standard out in reverse
+ * Delegates to printReverseHelper 
+ *
+ * Function: printReverse
+ * Param:  null
+ * return: void
+ */
 void List::printReverse()
 {
     if (head == nullptr) {
@@ -441,6 +530,12 @@ void List::printReverse()
     std::cout << "-------------------------*END REVERSE LIST*-------------------------" << std::endl;
 }
 
+/* This function returns the size of the largest element in the List
+ * 
+ * Function: sizeOfLargestElement
+ * Param:  null
+ * return: int
+ */
 int List::sizeOfLargestElement() const
 {
     if (head == nullptr) {
@@ -458,53 +553,80 @@ int List::sizeOfLargestElement() const
     return size;
 }
 
-bool List::find(Element target)
+/* This function finds matching target value in the List. Exact match logic.
+ * Delegates to strcmp, depends on Element class, <string.h>, <string>, etc.
+ * 
+ * Function: findMatch
+ * Param:  Element *, the target value to find a match for in the list
+ * return: bool
+ */
+bool List::findMatch(Element target)
 {
-    curr = head;
     bool found    = false;
     int  position = 0;
-    while(curr->getNext() != head) {
-        if(strcmp(curr->getData(), target.getData()) == 0)
-        {	
-            found = true;
-            std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+    if (head != nullptr) {
+        curr = head;
+        while(curr->getNext() != head) {
+            if(strcmp(curr->getData(), target.getData()) == 0)
+            {	
+                found = true;
+                std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+            }
+            curr = curr->getNext();
+            position++;
         }
-        curr = curr->getNext();
-        position++;
-    }
-    if (found == true) {
-        std::cout << "^POSITION^" << '\t' << "^DATA^" << std::endl;
+        if (found == true) {
+            std::cout << "^POSITION^" << '\t' << "^DATA^" << std::endl;
+        }
     }
     return found;   
 }
 
-bool List::find(Element * target)
+/* This function finds matching target value in the List. Exact match logic.
+ * Delegates to strcmp, depends on Element class, <string.h>, <string>, etc.
+ * 
+ * Function: findMatch
+ * Param:  Element *, the target value to find a match for in the list
+ * return: bool
+ */
+bool List::findMatch(Element * target)
 {
-    curr = head;
     bool found = false;
     int position = 0;
-    while(curr->getNext() != head) {
-        if(strcmp(curr->getData(), target->getData()) == 0)
-        {	
-            found = true;
-            std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+    if (head != nullptr) {
+        curr = head;
+        while(curr->getNext() != head) {
+            if(strcmp(curr->getData(), target->getData()) == 0)
+            {	
+                found = true;
+                std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+            }
+            curr = curr->getNext();
+            position++;
         }
-        curr = curr->getNext();
-        position++;
-    }
-    if (found == true) {
-        std::cout << "^POSITION^" << '\t' << "^DATA^" << std::endl;
+        if (found == true) {
+            std::cout << "^POSITION^" << '\t' << "^DATA^" << std::endl;
+        }
     }
     return found;   
 }
 
-bool List::contains(const Element & target)
+/* This function prints detailed information about the memory of the list to std::ostream
+ * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+ * An implicit wildcard in front of, behind, and between all chars in target search value.
+ * Basically a super wildcard match.
+ *
+ * Function: containsSequence
+ * Param:  Element &, the target value to search for in the list.
+ * return: bool
+ */
+bool List::containsSequence(const Element & target)
 {
-    curr = head;
     bool found    = false;
     bool foundOne = false;
     int  position = 0;
     if (head != nullptr) {
+        curr = head;
         while (curr->getNext() != head) {
             const char* data       = curr->getData();
             const char* searchData = target.getData();
@@ -524,9 +646,7 @@ bool List::contains(const Element & target)
             if (found) {
                 if (foundOne == false) {
                     foundOne = true;
-                    std::cout << "-------------------------*BEGIN List CONTAINS: " << target << "*------------------------" << std::endl;
-                    std::cout << "Matches found for: " << target << std::endl;
-                    std::cout << std::endl;
+                    std::cout << "-------------------------*BEGIN List CONTAINS Sequence: " << target << "*------------------------" << std::endl;
                 }
                 std::cout << "Position: " << position << "\tData:" << data << std::endl;
                 found = false; // reset fount for next.
@@ -537,19 +657,28 @@ bool List::contains(const Element & target)
         }
     } 
     if (foundOne) {
-        std::cout << "-------------------------*END List CONTAINS: " << target << "*------------------------" << std::endl;
+        std::cout << "-------------------------*END List CONTAINS Sequence: " << target << "*------------------------" << std::endl;
     }
 
     return foundOne;   
 }
-bool List::contains(Element* target)
+
+/* This function prints detailed information about the memory of the list to std::ostream
+ * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+ * An implicit wildcard in front of, behind, and between all chars in target search value.
+ * Basically a super wildcard match.
+ *
+ * Function: containsSequence
+ * Param:  Element &, the target value to search for in the list.
+ * return: bool
+ */
+bool List::containsSequence(Element* target)
 {
-    curr = head;
     bool found    = false;
     bool foundOne = false;
     int  position = 0;
-    
     if (head != nullptr) {
+        curr = head;
          while (curr->getNext() != head) {
              const char* data       = curr->getData();
              const char* searchData = target->getData();
@@ -572,9 +701,7 @@ bool List::contains(Element* target)
              if (found) {
                  if (foundOne == false) {
                      foundOne = true;
-                     std::cout << "-------------------------*BEGIN List CONTAINS: " << *target << "*------------------------" << std::endl;
-                     std::cout << "Matches found for: " << *target << std::endl;
-                     std::cout << std::endl;
+                     std::cout << "-------------------------*BEGIN List CONTAINS Sequence: " << *target << "*------------------------" << std::endl;
                  }
                  std::cout << "Position: " << position << "\tData:" << curr->getData() << std::endl;
                  found = false; // reset fount for next.
@@ -585,38 +712,51 @@ bool List::contains(Element* target)
          }
     } 
     if (foundOne) {
-        std::cout << "-------------------------*END List CONTAINS: " << *target << "*------------------------" << std::endl;
+        std::cout << "-------------------------*END List CONTAINS Sequence: " << *target << "*------------------------" << std::endl;
     }
     delete target;
     return foundOne;   
 }
 
-
-
-bool List::wildcardMatch(Element target)
+/* This function is a wildcard search. Requires explicit '*' wildcard search in Element target value.
+ * 
+ * Function: wildcardSearch
+ * Param:  Element, explicit wildcard value to find in the list
+ * return: bool
+ */
+bool List::wildcardSearch(Element target)
 {
-    curr = head;
     bool found    = false;
     bool foundOne = false;
     int  position = 0;
-    while (curr->getNext() != head) {
-        if (wildcardMatch(curr->getData(), target.getData())) {
-            if (foundOne == false) {
-                std::cout << "-------------------------*BEGIN List wildcardMATCH: " << target << "*------------------------" << std::endl;
-                foundOne = true;
+    if (head != nullptr) {
+        curr = head;
+        while (curr->getNext() != head) {
+            if (wildcardSearch(curr->getData(), target.getData())) {
+                if (foundOne == false) {
+                    std::cout << "-------------------------*BEGIN List WILDCARD Search: '" << target << "'*------------------------" << std::endl;
+                    foundOne = true;
+                }
+                found = true;
+                std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
             }
-            found = true;
-            std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+            curr = curr->getNext();
+            position++;
         }
-        curr = curr->getNext();
-        position++;
-    }
-    if (found == true) {
-        std::cout << "-------------------------*END List wildcardMATCH: " << target << "*------------------------" << std::endl;
+        if (found == true) {
+            std::cout << "-------------------------*END List WILDCARD Search: '" << target << "'*------------------------" << std::endl;
+        }
     }
     return found;   
 }
-bool List::wildcardMatch(const char* str, const char* pattern)
+
+/* This function is a wildcard search. Requires explicit '*' wildcard search in Element target value.
+ * 
+ * Function: wildcardSearch
+ * Param:  char *, char *, char and pattern to compare in search
+ * return: bool
+ */
+bool List::wildcardSearch(const char* str, const char* pattern)
 {
     // Initialize indices for str and pattern
     int strIndex = 0;
@@ -657,11 +797,22 @@ bool List::wildcardMatch(const char* str, const char* pattern)
     return (pattern[patternIndex] == '\0');         // If we've consumed the entire pattern, it's a match
 }
 
+// vvvvvvvvvvvvvvvvvvvvvvvvvvv--------------------------------------------------------------------------- 
+//
+// Operator Overload Functions
+//
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^---------------------------------------------------------------------------
 
 
-
-// ------------------------------------------------- Operator Overloads
-List & List::operator=(const List &other)              // Copy assignment operator
+/* This function copies the contents of one List to another List. COPY assignment operator
+ * 
+ * Operator: =
+ * Param:  const List & other, The list to be copied FROM
+ * return: List &,             The list to be copied to
+ * e.g. 
+ *  list1 = list2
+ */
+List & List::operator=(const List &other)  
 {
     std::cout << "copy assignment called" << std::endl;
     if (this != &other) {
@@ -677,7 +828,17 @@ List & List::operator=(const List &other)              // Copy assignment operat
     return *this;
 }
 
-List & List::operator=(List &&other)                   // Move assignment operator
+/* This operator moves the contents of one List to another List. MOVE assignment operator
+ * This operation moves the ownership of memory of the data to this List from other List.
+ * Results in the other list being cleared 
+ *
+ * Operator: =
+ * Param:  const List && other, The list to be moved FROM
+ * return: List &,              The list to be moved to
+ * e.g. 
+ *  list1 = std::move(list2)
+ */
+List & List::operator=(List &&other)  
 {
     std::cout << "move assignment called" << std::endl;
     if (this != &other) {
@@ -691,7 +852,16 @@ List & List::operator=(List &&other)                   // Move assignment operat
     return *this;
 }
 
-List List::operator+(const List &other) const          // Addition Operator
+/* This operator adds one list to another list and returns a new list
+ * Addition Operator
+ *
+ * Operator: +
+ * Param:  const List && other, The list to be added from
+ * return: List &,              The list to be added to
+ * e.g. 
+ *  list1 = list2 + list3 + list4 + list5
+ */
+List List::operator+(const List &other) const 
 {
     List newList(*this);                   // Create a new list by copying the current list 
     Element *otherCurr = other.head;       // Initialize otherCurr to the head of the other list 
@@ -706,7 +876,16 @@ List List::operator+(const List &other) const          // Addition Operator
     return newList;                        // Return the new list with concatenated elements
 }    
 
-bool List::operator==(const List &other) const        // Equality operator
+/* This operator compares equality of Lists
+ * Equality operator
+ *
+ * Operator: ==
+ * Param:  const List & other, rvalue
+ * return: bool
+ * e.g. 
+ *  list1 == list2
+ */
+bool List::operator==(const List &other) const  
 {
     if (this == &other)                    // Check if it's the same object
         return true;
@@ -739,11 +918,29 @@ bool List::operator==(const List &other) const        // Equality operator
 
     return true;                           // Lists are equal if both lists complete a full loop
 }
-bool List::operator!=(const List &other) const           // Inequality operator
+
+/* This operator compares inequality of Lists
+ * inequality operator -> delegates to equality operator
+ *
+ * Operator: !=
+ * Param:  const List & other, rvalue
+ * return: bool
+ * e.g. 
+ *  list1 != list2
+ */
+bool List::operator!=(const List &other) const 
 {
     return !(*this == other);
 }
 
+/* This operator prints to std::ostream
+ * Delegates to Element's stream output operator
+ * CSV style format
+ *
+ * Operator: <<
+ * Param:  List &
+ * return: std::ostream
+ */
 std::ostream & operator<<(std::ostream &out, List &list) // Stream output operator Comma Sepperated Values (CSV format)
 {
     Element *curr = list.getHead();
