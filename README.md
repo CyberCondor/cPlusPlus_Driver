@@ -13,6 +13,7 @@ This code is a work in progress. All methods have not yet been tested.
 <details>
 	<summary><h3>👁‍🗨 Special Thanks To:</h3></summary>
     <sub><sup>Thank you for teaching C++ with a focus on memory management!</sup></sub><br>
-		- <sub><sup>Doug Jones - Computer Science 2</sup></sub><br>
-    - <sub><sup>The Cherno - youtube[.]com/@TheCherno</sup></sub><br>
+	- <sub><sup>Doug Jones - Computer Science 2</sup></sub><br>
+	- <sub><sup>The Cherno - youtube[.]com/@TheCherno</sup></sub><br>
+	- <sub><sup>Low Level Learning - youtube[.]com/@LowLevelLearning</sup></sub><br>
 </details>
