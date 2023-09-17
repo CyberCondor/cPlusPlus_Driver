@@ -128,8 +128,6 @@ Element Element::operator+(char rvalue) {
     return result;
 }
 
-
-
 char* Element::intToString(int value) {
     char* buffer = new char[12];    // Allocate memory for the string
     int len = 0;
@@ -196,6 +194,8 @@ Element& Element::operator+=(const char* rvalue)
     }
     return *this;
 }
+
+
 
 //Relational Operators
 bool operator == (const Element & left, const Element & right)
@@ -265,4 +265,22 @@ int strcmp(const char * left, const char * right)                    // String C
         return -1;
     else
         return 1;
+}
+
+// Custom case-insensitive toUpper for Element class
+char toUpper(char ch)
+{
+    if (ch >= 'a' && ch <= 'z') {
+        return ch - 'a' + 'A';
+    }
+    return ch;
+}
+
+// Custom case-insensitive tolower for Element class
+char toLower(char ch)
+{
+    if (ch >= 'A' && ch <= 'Z') {
+        return ch - 'A' + 'a';
+    }
+    return ch;
 }
