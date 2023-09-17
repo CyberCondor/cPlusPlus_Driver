@@ -9,7 +9,7 @@ Element::Element()                                          // Default Construct
 
 Element::~Element()                                         // Destructor!
 {
-    totalMemUsed -=  ((strlen(data) + 1) * sizeof(char)); //(sizeof(Element) + ((strlen(data) + 1) * sizeof(char)));
+    totalMemUsed -=  ((strlen(data) + 1) * sizeof(char)); 
     delete [] data;
 }
 
@@ -17,46 +17,38 @@ Element::Element(const char * value) : Element::Element()     // Parameterized C
 {
     size_t strlenData   = strlen(value);
 
-   // if(((strlenData + 1) * sizeof(char))) < MEM_LIMIT) {
-    
-        this->data = new char [strlenData + 1]; // +1 for nullbyte
-        strcpy(this->data,value);	
-        this->next = nullptr;
+    this->data = new char [strlenData + 1]; // +1 for nullbyte
+    strcpy(this->data,value);	
+    this->next = nullptr;
 
-        totalMemUsed += ((strlenData + 1) * sizeof(char));
-  //  }
+    totalMemUsed += ((strlenData + 1) * sizeof(char));
 }
 
 Element::Element(Element * ptr) : Element::Element()           // Parameterized Constructor
 {
     size_t strlenData   = strlen(ptr->getData());
+        
+    this->data = new char [strlenData + 1]; // +1 for nullbyte
+    strcpy(this->data,ptr->getData());
+    this->setNext(ptr->getNext());
 
-  //  if((((strlenData + 1) * sizeof(char))) < MEM_LIMIT) {
-        this->data = new char [strlenData + 1]; // +1 for nullbyte
-        strcpy(this->data,ptr->getData());
-        this->setNext(ptr->getNext());
-
-        totalMemUsed += ((strlenData + 1) * sizeof(char));
-   // }
+    totalMemUsed += ((strlenData + 1) * sizeof(char));
 }
 
 Element::Element(const Element& other) : Element::Element()           // Copy Constructor
 {
 
     size_t strlenData   = strlen(other.data);
-
-  //  if((((strlenData + 1) * sizeof(char))) < MEM_LIMIT) {
                                         
-        data = new char[strlenData + 1];    // Allocate memory and copy the data from the other object
-        strcpy(data, other.data);
-        data[strlenData] = '\0';
+    data = new char[strlenData + 1];    // Allocate memory and copy the data from the other object
+    strcpy(data, other.data);
+    data[strlenData] = '\0';
 
-        next = nullptr;              // Initialize next
-        totalMemUsed += ((strlenData + 1) * sizeof(char));
-   // }
+    next = nullptr;              // Initialize next
+    totalMemUsed += ((strlenData + 1) * sizeof(char));
 }
 
-int Element::strlen(const char * value) const                    // Calculate length of source data
+int Element::strlen(const char * value) const               // Calculate length of source data
 {
     int count = 0;
     if(value != nullptr){
@@ -86,7 +78,7 @@ void Element::strcpy(char * left, const char * right)      // Used for Dynamic C
     left[ptr++] = '\0';
 }
 
-Element * Element::setNext(Element * direction)              // Set Data Pointer to Next 
+Element * Element::setNext(Element * direction)            // Set Data Pointer to Next 
 {
     this->next = direction;
     return this;
@@ -206,18 +198,14 @@ Element& Element::operator+=(const char* rvalue)
 }
 
 //Relational Operators
-//bool operator >  (const Element & left, const Element & right) { return left.getData() >  right.getData(); }
-//bool operator == (const Element & left, const Element & right) { return left.getData() == right.getData(); }
 bool operator == (const Element & left, const Element & right)
 {
     return strcmp(left.getData(), right.getData()) == 0;
 }
-
 bool operator > (const Element & left, const Element & right)
 {
     return strcmp(left.getData(), right.getData()) > 0;
 }
-
 bool operator != (const Element & left, const Element & right){ return !(left.getData() == right.getData()); } 
 bool operator >= (const Element & left, const Element & right){ return !(left.getData() <  right.getData()); }
 bool operator <= (const Element & left, const Element & right){ return !(left.getData() >  right.getData()); }
@@ -228,7 +216,6 @@ std::ostream & operator << (std::ostream & out, const Element & right) //Stream 
     out << right.getData();
     return out;
 }
-
 std::istream & operator >> (std::istream & in, Element & right)        //Stream Extraction
 {
     int     insert = 0;
@@ -256,7 +243,7 @@ std::istream & operator >> (std::istream & in, Element & right)        //Stream 
     return in;
 }
 
-int strcmp(const char * left, const char * right)
+int strcmp(const char * left, const char * right)                    // String Compare
 {
     int lPtr = 0;
     int rPtr = 0;
