@@ -16,8 +16,8 @@ public:
     List(Element*);                                                   // Parameterized constructor
     List(const List &other);                                          // Copy constructor
     
-    void insert(      Element *, int);                                // Insert at position
-    void insert(const Element &, int);                                // Insert at position       <- Delegates to Existing ^
+    void insert(      Element *, int);                                // Insert @ position
+    void insert(const Element &, int);                                // Insert @ position        <- Delegates to Existing ^
     bool insert(      Element *     );                                // Sorted Insertion Mutator
     bool insert(const Element &     );                                // Sorted Insertion Mutator <- Delegates to Existing ^
     
@@ -26,18 +26,24 @@ public:
     bool remove(      Element *);                                     // Remove by value
     bool remove(const Element &);                                     // Remove by value <- Delegates to Existing ^ 
     
-    bool findMatch(      Element *);                                  // Find Exact Match
-    bool findMatch(const Element &);                                  // Find Exact Match <- Delegates to Existing ^
+    bool findMatch  (      Element *);                                // Find Exact Match
+    bool findMatch  (const Element &);                                // Find Exact Match <- Delegates to Existing ^
+    bool findMatch_i(      Element *);                                // Find Match                               - CASE INSENSITIVE
+    bool findMatch_i(const Element &);                                // Find Match <- Delegates to Existing ^    - CASE INSENSITIVE
 
     bool containsSequence  (      Element *);                         // Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
     bool containsSequence  (const Element &);                         // Contains Chars in Sequence <- Delegates to Existing ^
-    bool containsSequence_i(      Element *);                         // Case insensitive contains  | e.g. car, am, ham, cam, HAM (etc.) contained in CHarM
-    bool containsSequence_i(const Element &);                         // Case insensitive contains  <- Delegates to Existing ^
+    bool containsSequence_i(      Element *);                         // Contains  | e.g. car, HAM (etc.) contained in CHarM - CASE INSENSITIVE
+    bool containsSequence_i(const Element &);                         // Contains <- Delegates to Existing ^                 - CASE INSENSITIVE
     
-    bool wildcardSearch(      Element *);                             // Search String Starts with*, ends *with, or *contains*
-    bool wildcardSearch(const Element &);                             // Search String Starts with*, ends *with, or *contains*
-    bool wildcardSearch(const char *, const char*);                   // Wildcard Search string helper.
+    bool wildcardSearch  (      Element *);                           // Search String Starts with*, ends *with, or *contains*
+    bool wildcardSearch  (const Element &);                           // Search String Starts with*, ends *with, or *contains*
+    bool wildcardSearch_i(      Element *);                           // Search String Starts with*, ends *with, or *contains* - CASE INSENSITIVE
+    bool wildcardSearch_i(const Element &);                           // Search String Starts with*, ends *with, or *contains* - CASE INSENSITIVE
+    bool wildcardSearch_i(const char *, const char*);                 // Wildcard Search string helper.
+    bool wildcardSearch  (const char *, const char*);                 // Wildcard Search string helper.
     
+    Element getDataAtPosition(int);                                   // Returns data at position in the List  
     void getDeets();                                                  // Display information about the MEMORY of the List  
     void print();                                                     // Display information about the List  
     void printReverse();                                              // Display information about the List in REVERSE
