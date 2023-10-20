@@ -6,14 +6,12 @@ List::List()                                         // Default Constructor
     curr         = nullptr;
     totalMemUsed = sizeof(*this);
 }
-
 List::List(Element *value)                           // Param Constructor
 {
     curr          = value;
     head          = value;
     totalMemUsed += value->getMemUsed();
 }
-
 List::~List()                                        // Destructor!
 {
     if (head != nullptr)
@@ -30,7 +28,6 @@ List::~List()                                        // Destructor!
         head = nullptr;
     }
 }
-
 List::List(const List &other)                        // Copy Constructor 
 {                               
     // Initialize head and curr pointers for the new list
@@ -227,7 +224,7 @@ void List::remove(int pos)
             prev->setNext(head);
             delete curr;
            // head = head->getNext(); // New head is next element
-            std::cout << "Removed Position: 0" << std::endl;
+            //std::cout << "Removed Position: 0" << std::endl;
         }
         else if(pos >= this->size()) // Remove tail
         {  
@@ -239,7 +236,7 @@ void List::remove(int pos)
             prev->setNext(head);    // New end of the List
             totalMemUsed -= curr->getMemUsed();
             delete curr;            // Delete last element
-            std::cout << "Removed Position: " << this->size() + 1 << std::endl;
+            //std::cout << "Removed Position: " << this->size() + 1 << std::endl;
         }
         else
         { 
@@ -249,7 +246,7 @@ void List::remove(int pos)
                 curr    = curr->getNext();
                 counter++;
             }
-            std::cout << "Removed Position: " << counter << std::endl;
+            //std::cout << "Removed Position: " << counter << std::endl;
             prev->setNext(curr->getNext()); 
             totalMemUsed -= curr->getMemUsed();
             delete curr;
@@ -272,7 +269,7 @@ bool List::remove(Element *target)
         {
             if(strcmp(curr->getData(), target->getData()) == 0)
             {
-                std::cout << "Removed " << target->getData() << " from the list.\n";
+                //std::cout << "Removed " << target->getData() << " from the list.\n";
                 remove(position);
                 delete target;
                 return true;
@@ -320,6 +317,36 @@ int List::size() const
     else {return 0;}
     return result;
 }  
+
+Element List::getDataAtPosition(int pos)   
+{
+    if(head == nullptr) {      // If no List 
+        return Element();
+    }                         
+    else
+    {   
+        Element * curr = head;
+        int counter = 0;
+        if (pos <= 0) {                   // Get head
+            return Element(curr->getData());
+        } 
+        else if (pos >= this->size()) {   // Get tail
+            while(curr->getNext() != head) 
+                curr = curr->getNext();   // Find end
+            return Element(curr->getData());
+        }
+        else                              // Insert at position
+        {
+            while(curr->getNext() != head && counter < pos)
+            {
+                curr = curr->getNext(); // Point to next ptr
+                counter++;              // Increment counter
+            }
+            return Element(curr->getData());
+        }
+    }
+    return Element();    // Return Empty Element by Default
+}
 
 /* This function prints detailed information about the memory of the List to standard out
  * 
@@ -510,20 +537,48 @@ bool List::findMatch(Element *target)
     int  position = 0;
     if (head != nullptr) {
         curr = head;
-        while(curr->getNext() != head) {
+        do
+        {
             if(strcmp(curr->getData(), target->getData()) == 0)
             {	
                 if(found == false) {
                     found = true;
                     std::cout << "\n-------------------------BEGIN List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "Position: " << position << "\tData:" << curr->getData() << std::endl;
+                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
-        }
+        } while(curr != head);
         if (found == true) {
             std::cout << "-------------------------END List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
+        }
+    }
+    delete target;
+    return found;   
+}
+// CASE INSENSITIVE VERSION
+bool List::findMatch_i(Element *target)
+{
+    bool found    = false;
+    int  position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp_i(curr->getData(), target->getData()) == 0)
+            {	
+                if(found == false) {
+                    found = true;
+                    std::cout << "\n-------------------------BEGIN List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
+                }
+                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+            }
+            curr = curr->getNext();
+            position++;
+        } while (curr != head);
+        if (found == true) {
+            std::cout << "-------------------------END List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
@@ -541,6 +596,11 @@ bool List::findMatch(const Element &targetRef)
     Element * target = new Element(targetRef);
     return findMatch(target);
 }
+bool List::findMatch_i(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return findMatch_i(target);
+}
 
 /* Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
  * An implicit wildcard in front of, behind, and between all chars in target search value.
@@ -557,37 +617,38 @@ bool List::containsSequence(Element *target)
     int  position = 0;
     if (head != nullptr) {
         curr = head;
-         while (curr->getNext() != head) {
-             const char* data       = curr->getData();
-             const char* searchData = target->getData();
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
 
-             int i = 0;
-             int j = 0;
+            int i = 0;
+            int j = 0;
 
-             while (data[i] != '\0') {
+            while (data[i] != '\0') {
             
-                 if (data[i] == searchData[j]) {
-                     j++;
-                     if (searchData[j] == '\0') {
-                         found = true;
-                         break;
-                     }
-                 }
-                 i++;
-             }
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        found = true;
+                        break;
+                    }
+                }
+                i++;
+            }
 
-             if (found) {
-                 if (foundOne == false) {
-                     foundOne = true;
-                     std::cout << "\n-------------------------BEGIN List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
-                 }
-                 std::cout << "Position: " << position << "\tData:" << curr->getData() << std::endl;
-                 found = false; // reset fount for next.
-             }
-             
-             curr = curr->getNext();
-             position++;
-         }
+            if (found) {
+                if (foundOne == false) {
+                    foundOne = true;
+                    std::cout << "\n-------------------------BEGIN List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+                }
+                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                found = false; // reset fount for next.
+            }
+            
+            curr = curr->getNext();
+            position++;
+        } while (curr != head);
     } 
     if (foundOne) {
         std::cout << "-------------------------END List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
@@ -625,7 +686,8 @@ bool List::containsSequence_i(Element *target)
     int  position = 0;
     if (head != nullptr) {
         Element *curr = head;
-        while (curr->getNext() != head) {
+        do
+        {
             const char* data       = curr->getData();
             const char* searchData = target->getData();
             int i = 0;
@@ -644,18 +706,18 @@ bool List::containsSequence_i(Element *target)
             if (found) {
                 if (foundOne == false) {
                     foundOne = true;
-                    std::cout << "\n-------------------------BEGIN List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+                    std::cout << "\n-------------------------BEGIN List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "Position: " << position << "\tData:" << data << std::endl;
+                std::cout << "idx:(" << position << ") \tData:" << data << std::endl;
                 found = false; // reset fount for next.
             }
             
             curr = curr->getNext();
             position++;
-        }
+        } while (curr != head);
     } 
     if (foundOne) {
-        std::cout << "-------------------------END List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+        std::cout << "-------------------------END List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
     }
     delete target;
     return foundOne;   
@@ -680,20 +742,48 @@ bool List::wildcardSearch(Element *target)
     int  position = 0;
     if (head != nullptr) {
         curr = head;
-        while (curr->getNext() != head) {
+        do
+        {
             if (wildcardSearch(curr->getData(), target->getData())) {
                 if (foundOne == false) {
                     std::cout << "\n-------------------------BEGIN List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
                     foundOne = true;
                 }
                 found = true;
-                std::cout << position << '\t' << '\t' << curr->getData() << std::endl;
+                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
-        }
+        } while (curr != head);
         if (found == true) {
             std::cout << "-------------------------END List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+        }
+    }
+    delete target;
+    return found;   
+}
+bool List::wildcardSearch_i(Element *target)
+{
+    bool found    = false;
+    bool foundOne = false;
+    int  position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do    
+        {
+            if (wildcardSearch_i(curr->getData(), target->getData())) {
+                if (foundOne == false) {
+                    std::cout << "\n-------------------------BEGIN List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+                    foundOne = true;
+                }
+                found = true;
+                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+            }
+            curr = curr->getNext();
+            position++;
+        } while (curr != head);
+        if (found == true) {
+            std::cout << "-------------------------END List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
@@ -711,6 +801,11 @@ bool List::wildcardSearch(const Element &targetRef)
     Element * target = new Element(targetRef);
     return wildcardSearch(target);
 }
+bool List::wildcardSearch_i(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_i(target);
+}
 /* This function is a wildcard search helper.
  * 
  * Function: wildcardSearch
@@ -727,6 +822,38 @@ bool List::wildcardSearch(const char *str, const char *pattern)
 
     while (str[strIndex] != '\0') {
         if (pattern[patternIndex] == str[strIndex] || pattern[patternIndex] == '?') {
+            strIndex++;                             // Characters match or pattern has a '?'; continue matching
+            patternIndex++;
+        }
+        else if (pattern[patternIndex] == '*') {
+            strStarIndex = strIndex;                // '*' character in pattern; update indices
+            patternStarIndex = patternIndex;
+            patternIndex++;
+        }
+        else if (patternStarIndex != -1) {
+            patternIndex = patternStarIndex + 1;    // Mismatch, but we have a previous '*'; backtrack
+            strStarIndex++;
+            strIndex = strStarIndex;
+        }
+        else {return false;}                        // Mismatch and no previous '*'; not matching
+    }
+
+    while (pattern[patternIndex] == '*') {          // Check for remaining characters in the pattern
+        patternIndex++;
+    }
+
+    return (pattern[patternIndex] == '\0');         // If we've consumed the entire pattern, it's a match
+}
+bool List::wildcardSearch_i(const char *str, const char *pattern)
+{
+    // Initialize indices for str and pattern
+    int strIndex = 0;
+    int patternIndex = 0;
+    int strStarIndex = -1; // Index of the last '*' character in str
+    int patternStarIndex = -1; // Index of the last '*' character in pattern
+
+    while (str[strIndex] != '\0') {
+        if (toLower(pattern[patternIndex]) == toLower(str[strIndex]) || pattern[patternIndex] == '?') {
             strIndex++;                             // Characters match or pattern has a '?'; continue matching
             patternIndex++;
         }
@@ -868,7 +995,6 @@ bool List::operator==(const List &other) const
 
          } while (thisCurr != head && otherCurr != other.head);
     }
-
     return true;                           // Lists are equal if both lists complete a full loop
 }
 
