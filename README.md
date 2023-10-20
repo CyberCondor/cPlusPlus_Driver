@@ -4,7 +4,7 @@
 This code demonstrates dynamic memory allocation in C++ using circular linked lists.
 I wrote some of this code back in Computer Science 2 class and have since revisited it to better understand C++ and computer memory usage of programs during runtime.
 
-This code is a work in progress. All methods have not yet been tested.
+This code is a work in progress. *Some* methods have not yet been fuzz tested.
 
 ---
 #
