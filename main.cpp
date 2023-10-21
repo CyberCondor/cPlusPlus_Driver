@@ -8,110 +8,114 @@ including the compiler, target hardware, compiler flags, and platform-specific c
 
 int main(int argc, char **argv, char **envp) {
 
-    List list;
-    list.insert(Element("Item A"));                  // Sorted Insertion Mutator
-    list.insert(Element("IteM A"));                  // Sorted Insertion Mutator
-    list.insert(Element("ItEm A"));                  // Sorted Insertion Mutator
-    list.insert(Element("ITem B"));                  // Sorted Insertion Mutator
-    list.insert(Element("ITem 1"));                  // Sorted Insertion Mutator
+    int row = 34;
+    int col = 34;
 
-    list.print();
-    list.getDeets();
-
-    for(auto idx = 0; idx < argc; idx++)                  // For the Argument Count 
-    {                                                     // Put the parameterized arguments into an organized list
-        list.insert(Element(argv[idx]));                             // And the Sorted Insertion Mutator for previously created list
-    }
-    for(auto idx = 0; envp[idx] != nullptr; idx++)        // Until the end of environment variables (nullptr)
-    {                                                     // Put the environment variables into an organized list 
-        list.insert(Element(envp[idx]));                             // And the Sorted Insertion Mutator for previously created list
-    }
-
-    list.print();
-
-    list.getDeets();
-
-    list.remove(35);
-
-    list.getDeets();
-
-    list.print();
-
-    for (int i = 0; i < 100; i++) {
-        Element e = "item";
-        e += i;
-        list.insert(e);    
-    }
+    Matrix matrix(row, col);
     
-    Element e = "item";
-    int i = 91920;
-    Element f = e + i ;
+    std::cout << "Martix created" <<std::endl;
+    matrix.print();
+    std::cout << "Value at (1, 2): " << matrix.getValue(1, 2) << std::endl;
 
-    Element p = "tailpid";
+    matrix.transpose();
 
-    std::cout<<p + "tailpod" + i + "pong" + f + p + i + f<<std::endl;
-    
-    list.insert(Element(p + "tailpod" + i + "pong" + f + p + i + f));
+    std::cout << "Transposed Matrix:" << std::endl;
+    matrix.print();
 
-    list.insert(f);
+    matrix.transpose();
 
-    list.printReverse();
+    std::cout << "Transposed back Matrix:" << std::endl;
+    matrix.print();
 
-    list.findMatch(Element("Item A"));
-    list.remove(23);
-    if (!(list.findMatch(Element("Item A")))) {
-        std::cout<<"not found!"<<std::endl;
-    }
+    matrix.printRow(2);
+    matrix.printColumn(4);
+
+    List   list;
+    list.insert(Element("This string "));
+    list.insert(Element(",that string."));
 
     list.print();
 
-    if (list.wildcardSearch(Element("*9"))) {
-        std::cout << "yes this exists- WILDCARDmATCH" << std::endl;
-    }
+    list.wildcardSearch("*n*");
+    list.containsSequence("strin");
+    list.findMatch("This string ");
+    list.findMatch(",that string.");
+    list.wildcardSearch_i("*n*");
+    list.containsSequence_i("strin");
+    list.findMatch_i("This string ");
+    list.findMatch_i(",that string.");
+
+    Matrix atrix(row, col, Element("tato"));
+
+    matrix.printIntersections();  
+
+    matrix.printIntersection(0, 0);  
+    matrix.printIntersection(row - 1, col - 1);  
+
+    matrix.printRow(2);
+    matrix.printColumn(4);
+
+    atrix.print();
+    atrix.print();
+
+    Object potato(Element("Potato!"), row, col);
+
+    std::cout << "Value at (1, 2): " << potato.getMatrix().getValue(1, 2) << std::endl;
+    std::cout << "Value at (6, 6): " << potato.getMatrix().getValue(6, 6) << std::endl;
+    atrix.print();
+
+    potato.setMatrixValue(6, 6, Element("potato"));    
+    std::cout << "Value at (6, 6): " << potato.getMatrix().getValue(6, 6) << std::endl;
+    atrix.print();
+
+    potato.print();
+    potato.setMatrixValue(1, 3, Element("drink"));    
+    potato.print();
+    potato.setMatrixValue(3, 3, Element("burger"));    
+    potato.print();
+    potato.setMatrixValue(3, 6, Element("salad"));    
+    potato.print();
+    potato.setMatrixValue(2, 11, Element("potato"));    
+    potato.print();
+    potato.setMatrixValue(4, 11, Element("potato"));    
+    potato.print();
+    potato.setMatrixValue(8, 11, Element("potato"));    
+    potato.print();
+    potato.setMatrixValue(8, 11, Element("loltato"));    
+    potato.print();
+    potato.setMatrixValue(8, 11, Element("taco"));    
+    potato.print();
+
+    potato.getMatrix().printRow(8);
+    potato.getMatrix().printColumn(11);
+    potato.setMatrixValues(Element("potato"));    
     
-    if (list.containsSequence(Element("tem"))) {
-        std::cout << "yes tem exists - CONTAINS" << std::endl;
-    }
+    potato.setMatrixValuesDiagonal_BottomRightToUpperLeft(Element("BR-UL"));
+    potato.setMatrixValuesDiagonal_BottomLeftToUpperRight(Element("BL-UR"));
+    potato.setMatrixValuesDiagonal_UpperLeftToBottomRight(Element("UL-BR"));
+    potato.setMatrixValuesDiagonal_UpperRightToBottomLeft(Element("UR-BL"));
 
+    Object pan;
+    pan.print();
 
-    if (list.containsSequence(Element("21"))) {
-        std::cout << "yes 21 exists - CONTAINS" << std::endl;
-    }
+    matrix.setValues("Lato! lol");
 
-    list.containsSequence(Element("z"));
-    list.containsSequence(Element("2"));
-    list.containsSequence(Element("9"));
-    list.containsSequence(Element("CyberCondor"));
+    matrix.resize(11, 12);
+    matrix.print();
+    matrix.resize(102, 39);
+    matrix.setValues("tolTato!");
 
-    for (int i = 0; i < 105; i++) {
-        Element e = "item";
-        e += i;
-        list.remove(e);    
-    }
+    matrix.print();
 
-    if (list.containsSequence(new Element("tem"))) {
-        std::cout << "yes tem exists POINTER USED - CONTAINS" << std::endl;
-    }
-
-    list.insert(Element(p + "tailpod" + i + "pong" + f + p + i + f));
-//    list.insert(Element("tailpod" + i + "ping" + "pong" + f + p + i + f)); make this work!
-
-    list.insert(new Element("cybercondor wrote this code"));
-    list.insert(Element("CyberCondor wrote this code"));
-    list.containsSequence(Element("cdor"));
-    list.containsSequence(Element("lcv"));
-    list.containsSequence(Element("cyber"));
-    list.findMatch(Element("CyberCondor wrote this code"));
-    list.findMatch(Element("cybercondor"));
-
-    list.insert(Element("Who is CyberCondor"));
-    list.wildcardSearch(Element("*CyberCondor*"));
-    list.wildcardSearch(Element("*Cybercondor"));
-    list.wildcardSearch(Element("CyberCondor*"));
-    list.wildcardSearch(Element("*Cyber*"));
-
-    list.containsSequence_i(Element("cdor"));
-    list.containsSequence_i(Element("cDoR"));
+    pan.rename(Element("pan"));
+    pan.print();
     
+    Object jan;
+
+    jan.rename(Element("jan"));
+    jan.print();
+
+    potato.print();
+
     return 0;
 }
