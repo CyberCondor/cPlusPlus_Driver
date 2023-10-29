@@ -1,24 +1,54 @@
 #include "object.h"
 
-Object::Object() : matrix(), name("NULL")
-{
-    // Default Constructor - Delegate to existing default constructors. Object is null.
-}
-Object::Object(Element name, int numRows, int numCols) : matrix(numRows, numCols, Element(" ")), name(name)
-{
-    // Initialize the matrix with the specified number of rows and columns
-}
-
 void Object::rename(const Element & name)
 {
     Element e(name); //// ~!!!!!!!!! need Element copy and move constructors for this->name = name;
     this->name.setData(e.getData());
+    this->properties.insert(Element("Name"),e);
+    this->setMatrixValues(e);
 }
 
-void Object::print() const {
+void Object::print() const
+{
     std::cout << "Object: ";
-    std::cout << name << std::endl; // Print the name using the Element class
+    std::cout << name << "\n" << std::endl; // Print the name using the Element class
+    this->properties.print();
     this->matrix.print();           // Delegate printing to the matrix
+    this->space.print();            // Delegate printing to object space
+}
+
+void Object::setDefaultProperties()
+{
+    this->properties.setDefault();
+}
+
+bool Object::addProperty(const Property & property)
+{
+    return this->properties.insert(property);
+}
+bool Object::addProperty(const Element & key)
+{
+    return this->properties.insert(key);
+}
+bool Object::addProperty(const Element & key, const Element & value)
+{
+    return this->properties.insert(key, value);
+}
+bool Object::addProperty(const Element & key, const String & value)
+{
+    return this->properties.insert(key, value);
+}
+bool Object::setProperty(const Property & property)
+{
+    return this->properties.insert(property);
+}
+bool Object::setProperty(const Element & key, const Element & value)
+{
+    return this->properties.insert(key, value);
+}
+bool Object::setProperty(const Element & key, const String & value)
+{
+    return this->properties.insert(key, value);
 }
 
 void Object::setMatrixValue(int row, int col, const Element & value)
