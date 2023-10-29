@@ -8,114 +8,28 @@ including the compiler, target hardware, compiler flags, and platform-specific c
 
 int main(int argc, char **argv, char **envp) {
 
-    int row = 34;
-    int col = 34;
+    Object object(Element("Pie"), 4,3);
 
-    Matrix matrix(row, col);
-    
-    std::cout << "Martix created" <<std::endl;
-    matrix.print();
-    std::cout << "Value at (1, 2): " << matrix.getValue(1, 2) << std::endl;
+    object.setDefaultProperties();
 
-    matrix.transpose();
+    object.print();
 
-    std::cout << "Transposed Matrix:" << std::endl;
-    matrix.print();
+    object.rename(Element("Booooooooooooo!"));
 
-    matrix.transpose();
+    object.addProperty(Element("Length"),        String(Element("9 lawn gnomes")));
+    object.addProperty(Element("Wanted Level"),  Element("6 stars"));
+    object.addProperty(Element("Freedom Points"),Element("Wanted"));
+    object.addProperty(Element("longness"),      Element("6 longlongs"));
+    object.addProperty(Element("Status"),        Element("On the run"));
+    object.setProperty(Element("Description"),   Element("Not a Ghost"));
 
-    std::cout << "Transposed back Matrix:" << std::endl;
-    matrix.print();
+    object.setPosition(Position(0,0,1));
 
-    matrix.printRow(2);
-    matrix.printColumn(4);
+    object.print();
 
-    List   list;
-    list.insert(Element("This string "));
-    list.insert(Element(",that string."));
+    object.getMatrix().transpose();
 
-    list.print();
-
-    list.wildcardSearch("*n*");
-    list.containsSequence("strin");
-    list.findMatch("This string ");
-    list.findMatch(",that string.");
-    list.wildcardSearch_i("*n*");
-    list.containsSequence_i("strin");
-    list.findMatch_i("This string ");
-    list.findMatch_i(",that string.");
-
-    Matrix atrix(row, col, Element("tato"));
-
-    matrix.printIntersections();  
-
-    matrix.printIntersection(0, 0);  
-    matrix.printIntersection(row - 1, col - 1);  
-
-    matrix.printRow(2);
-    matrix.printColumn(4);
-
-    atrix.print();
-    atrix.print();
-
-    Object potato(Element("Potato!"), row, col);
-
-    std::cout << "Value at (1, 2): " << potato.getMatrix().getValue(1, 2) << std::endl;
-    std::cout << "Value at (6, 6): " << potato.getMatrix().getValue(6, 6) << std::endl;
-    atrix.print();
-
-    potato.setMatrixValue(6, 6, Element("potato"));    
-    std::cout << "Value at (6, 6): " << potato.getMatrix().getValue(6, 6) << std::endl;
-    atrix.print();
-
-    potato.print();
-    potato.setMatrixValue(1, 3, Element("drink"));    
-    potato.print();
-    potato.setMatrixValue(3, 3, Element("burger"));    
-    potato.print();
-    potato.setMatrixValue(3, 6, Element("salad"));    
-    potato.print();
-    potato.setMatrixValue(2, 11, Element("potato"));    
-    potato.print();
-    potato.setMatrixValue(4, 11, Element("potato"));    
-    potato.print();
-    potato.setMatrixValue(8, 11, Element("potato"));    
-    potato.print();
-    potato.setMatrixValue(8, 11, Element("loltato"));    
-    potato.print();
-    potato.setMatrixValue(8, 11, Element("taco"));    
-    potato.print();
-
-    potato.getMatrix().printRow(8);
-    potato.getMatrix().printColumn(11);
-    potato.setMatrixValues(Element("potato"));    
-    
-    potato.setMatrixValuesDiagonal_BottomRightToUpperLeft(Element("BR-UL"));
-    potato.setMatrixValuesDiagonal_BottomLeftToUpperRight(Element("BL-UR"));
-    potato.setMatrixValuesDiagonal_UpperLeftToBottomRight(Element("UL-BR"));
-    potato.setMatrixValuesDiagonal_UpperRightToBottomLeft(Element("UR-BL"));
-
-    Object pan;
-    pan.print();
-
-    matrix.setValues("Lato! lol");
-
-    matrix.resize(11, 12);
-    matrix.print();
-    matrix.resize(102, 39);
-    matrix.setValues("tolTato!");
-
-    matrix.print();
-
-    pan.rename(Element("pan"));
-    pan.print();
-    
-    Object jan;
-
-    jan.rename(Element("jan"));
-    jan.print();
-
-    potato.print();
+    object.print();
 
     return 0;
 }
