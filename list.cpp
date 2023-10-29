@@ -6,12 +6,23 @@ List::List()                                         // Default Constructor
     curr         = nullptr;
     totalMemUsed = sizeof(*this);
 }
-List::List(Element *value)                           // Param Constructor
+
+List::List(Element *value)  : List()             // Param Constructor
 {
-    curr          = value;
-    head          = value;
-    totalMemUsed += value->getMemUsed();
+    this->insert(value);
+   // curr          = value;
+   // head          = value;
+   // totalMemUsed += value->getMemUsed();
 }
+
+List::List(Element element)  : List()             // Param Constructor
+{
+    this->insert(element);
+   // curr          = value;
+   // head          = value;
+   // totalMemUsed += value->getMemUsed();
+}
+
 List::~List()                                        // Destructor!
 {
     if (head != nullptr)
@@ -28,7 +39,8 @@ List::~List()                                        // Destructor!
         head = nullptr;
     }
 }
-List::List(const List &other)                        // Copy Constructor 
+
+List::List(const List &other) : List()                       // Copy Constructor 
 {                               
     // Initialize head and curr pointers for the new list
     head = nullptr;
@@ -191,7 +203,7 @@ bool List::insert(const Element &targetRef)
 /* This function deletes an Element at a specified position in the List
  * Position Deletion Mutator
  * 
- * Function: getDeets
+ * Function: remove
  * Param:  int, position of Element to remove from List
  * return: void
  */
@@ -204,7 +216,7 @@ void List::remove(int pos)
     if (size() == 1) {  // If head.next points to self, nothing to traverse
         delete head;
         head = nullptr; 
-        std::cout << "Delete Head." << std::endl;
+        //std::cout << "Delete Head." << std::endl;
         return;
     }
     if(head != nullptr) // If no List, nothing to remove. Redundant from above check.
