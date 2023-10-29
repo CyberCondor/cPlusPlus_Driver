@@ -14,6 +14,7 @@ public:
    ~List();                                                           // Destructor
     List();                                                           // Default constructor
     List(Element*);                                                   // Parameterized constructor
+    List(Element);                                                    // Parameterized constructor
     List(const List &other);                                          // Copy constructor
     
     void insert(      Element *, int);                                // Insert @ position
