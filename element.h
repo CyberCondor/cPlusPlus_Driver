@@ -31,7 +31,7 @@ public:
 
     inline char** getDataMem()            {return &data;};         // Get memory location of data
     
-    inline int    size() {if(strlen(this->data) == 0){return 0;}   // Size Accessor   - includes nullbyte in size
+    inline int size()const{if(strlen(this->data) == 0){return 0;}   // Size Accessor   - includes nullbyte in size
                           else{return strlen(this->data) + 1;}}; 
   
     inline int    length()           {return strlen(this->data);}; // Length Accessor - excludes nullbyte in length
