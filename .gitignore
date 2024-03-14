@@ -1,0 +1,12 @@
+# ignore main executable
+main
+
+# ignore other test files
+._*
+*.bak
+*.csv
+
+# Executables
+*.exe
+*.out
+*.app
