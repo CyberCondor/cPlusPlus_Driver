@@ -51,7 +51,6 @@ int main(int argc, char **argv, char **envp)
 
 <img align="left" width="320px" alt="RuntimeScreenshot" src="https://github.com/CyberCondor/_media/blob/main/Driver_RuntimeScreenshot1.png" /> 
 <img width="365px" alt="RuntimeScreenshot" src="https://github.com/CyberCondor/_media/blob/main/Driver_RuntimeScreenshot2.png" /> 
-<br><br>
 
 ---
 #
