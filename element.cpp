@@ -351,12 +351,12 @@ std::istream & operator >> (std::istream & in, Element * right)        //Stream 
 
 int strcmp(const char * left, const char * right)                    // String Compare
 {
+    if (left == nullptr && right == nullptr)
+        return 0;
     if (left == nullptr)
         return -1;
     if (right == nullptr)
         return 1;
-    if (left == nullptr && right == nullptr)
-        return 0;
     
     int lPtr = 0;
     int rPtr = 0;
@@ -380,12 +380,12 @@ int strcmp(const char * left, const char * right)                    // String C
 
 int strcmp_i(const char * left, const char * right)                 // String Compare Case Insensitive
 {
+    if (left == nullptr && right == nullptr)
+        return 0;
     if (left == nullptr)
         return -1;
     if (right == nullptr)
         return 1;
-    if (left == nullptr && right == nullptr)
-        return 0;
 
     int lPtr = 0;
     int rPtr = 0;
