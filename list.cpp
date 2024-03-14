@@ -1,29 +1,23 @@
 #include "list.h"
 
-List::List()                                         // Default Constructor
+List::List()                                     // Default Constructor
 {
     head         = nullptr;
     curr         = nullptr;
     totalMemUsed = sizeof(*this);
 }
 
-List::List(Element *value)  : List()             // Param Constructor
+List::List(Element *value)  : List()            // Param Constructor
 {
     this->insert(value);
-   // curr          = value;
-   // head          = value;
-   // totalMemUsed += value->getMemUsed();
 }
 
-List::List(Element element)  : List()             // Param Constructor
+List::List(Element element)  : List()           // Param Constructor
 {
     this->insert(element);
-   // curr          = value;
-   // head          = value;
-   // totalMemUsed += value->getMemUsed();
 }
 
-List::~List()                                        // Destructor!
+List::~List()                                   // Destructor!
 {
     if (head != nullptr)
     {
@@ -40,7 +34,7 @@ List::~List()                                        // Destructor!
     }
 }
 
-List::List(const List &other) : List()                       // Copy Constructor 
+List::List(const List &other) : List()          // Copy Constructor 
 {                               
     // Initialize head and curr pointers for the new list
     head = nullptr;
@@ -330,7 +324,7 @@ int List::size() const
     return result;
 }  
 
-Element List::getDataAtPosition(int pos)   
+Element List::getDataAtPosition(int pos) const   
 {
     if(head == nullptr) {      // If no List 
         return Element();
@@ -420,6 +414,7 @@ void List::getDeets()
     std::cout << "\tTotal Memory of this    List    in BYTES:("<< this->getMemUsed()          << ")"<< std::endl;
     std::cout << "\t                        List       Size :("<< this->size()                << ")"<< std::endl;
     std::cout << "-------------------------*END LIST DETAILS*-------------------------"             << std::endl;
+
 }
 
 /* This function prints the List to standard out
@@ -537,7 +532,7 @@ int List::sizeOfLargestElement() const
 }
 
 /* This function finds matching target value in the List. Exact match logic.
- * Delegates to strcmp, depends on Element class, <string.h>, <string>, etc.
+ * Delegates to strcmp, depends on Element class, <list.h>, <list>, etc.
  * 
  * Function: findMatch
  * Param:  Element *, the target value to find a match for in the list
@@ -555,19 +550,55 @@ bool List::findMatch(Element *target)
             {	
                 if(found == false) {
                     found = true;
-                    std::cout << "\n-------------------------BEGIN List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
         } while(curr != head);
         if (found == true) {
-            std::cout << "-------------------------END List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
+            //std::cout << "-------------------------END List FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
     return found;   
+}
+Positions List::findMatch_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp(curr->getData(), target->getData()) == 0)
+            {
+                positions.insert(Position(position,0));
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+List List::findMatch_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp(curr->getData(), target->getData()) == 0)
+            {
+                list.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return list;   
 }
 // CASE INSENSITIVE VERSION
 bool List::findMatch_i(Element *target)
@@ -582,20 +613,59 @@ bool List::findMatch_i(Element *target)
             {	
                 if(found == false) {
                     found = true;
-                    std::cout << "\n-------------------------BEGIN List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
-        } while (curr != head);
+        } while(curr != head);
         if (found == true) {
-            std::cout << "-------------------------END List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
+            //std::cout << "-------------------------END List FIND CASE INSENSITIVE MATCH: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
     return found;   
 }
+
+// CASE INSENSITIVE VERSION
+Positions List::findMatch_i_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp_i(curr->getData(), target->getData()) == 0)
+            {	
+                positions.insert(Position(position,0));
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+List List::findMatch_i_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp_i(curr->getData(), target->getData()) == 0)
+            {	
+                list.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return list;   
+}
+
 /* This function finds matching target value in the List. Exact match logic.
  * Delegates to existing findMatch function ^
  * 
@@ -603,15 +673,35 @@ bool List::findMatch_i(Element *target)
  * Param:  Element &, the target value to find a match for in the list
  * return: bool
  */
-bool List::findMatch(const Element &targetRef)
+bool List::findMatch(const Element &targetRef) 
 {
     Element * target = new Element(targetRef);
     return findMatch(target);
 }
-bool List::findMatch_i(const Element &targetRef)
+Positions List::findMatch_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return findMatch_p(target);
+}
+List List::findMatch_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return findMatch_z(target);
+}
+bool List::findMatch_i(const Element &targetRef) 
 {
     Element * target = new Element(targetRef);
     return findMatch_i(target);
+}
+Positions List::findMatch_i_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return findMatch_i_p(target);
+}
+List List::findMatch_i_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return findMatch_i_z(target);
 }
 
 /* Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
@@ -633,12 +723,10 @@ bool List::containsSequence(Element *target)
         {
             const char* data       = curr->getData();
             const char* searchData = target->getData();
-
             int i = 0;
             int j = 0;
-
             while (data[i] != '\0') {
-            
+       
                 if (data[i] == searchData[j]) {
                     j++;
                     if (searchData[j] == '\0') {
@@ -652,24 +740,23 @@ bool List::containsSequence(Element *target)
             if (found) {
                 if (foundOne == false) {
                     foundOne = true;
-                    std::cout << "\n-------------------------BEGIN List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
                 found = false; // reset fount for next.
             }
-            
+             
             curr = curr->getNext();
             position++;
-        } while (curr != head);
+        } while(curr != head);
     } 
     if (foundOne) {
-        std::cout << "-------------------------END List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+        //std::cout << "-------------------------END List CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
     }
     delete target;
     return foundOne;   
 }
-/* This function delegates to the existing containsSequence function ^
- * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+/* Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
  * An implicit wildcard in front of, behind, and between all chars in target search value.
  * Basically a super wildcard match.
  *
@@ -677,12 +764,66 @@ bool List::containsSequence(Element *target)
  * Param:  Element &, the target value to search for in the list.
  * return: bool
  */
-bool List::containsSequence(const Element &targetRef)
+Positions List::containsSequence_p(Element *target)
 {
-    Element * target = new Element(targetRef);
-    return containsSequence(target);
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+       
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0')
+                    {
+                        positions.insert(Position(position,0));
+                        break;
+                    }
+                }
+                i++;
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return positions;
 }
-
+List List::containsSequence_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+       
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0')
+                    {
+                        list.insert(curr->getData());
+                        break;
+                    }
+                }
+                i++;
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return list;   
+}
 /* Case insensitive super wildcard search.
  * Contains Chars in Sequence | e.g. car, aM, ham, CAm, (etc.) contained in CHarM
  * An implicit wildcard in front of, behind, and between all chars in target search value.
@@ -718,27 +859,118 @@ bool List::containsSequence_i(Element *target)
             if (found) {
                 if (foundOne == false) {
                     foundOne = true;
-                    std::cout << "\n-------------------------BEGIN List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "idx:(" << position << ") \tData:" << data << std::endl;
-                found = false; // reset fount for next.
+                //std::cout << "idx:(" << position << ") \tData:" << data << std::endl;
+                found = false; // reset found for next.
             }
             
             curr = curr->getNext();
             position++;
-        } while (curr != head);
+        } while(curr != head);
     } 
     if (foundOne) {
-        std::cout << "-------------------------END List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
+        //std::cout << "-------------------------END List Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
     }
     delete target;
     return foundOne;   
 }
-// Case insensitive super wildcard search - delegates to existing ^
-bool List::containsSequence_i(const Element &targetRef)
+Positions List::containsSequence_i_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        Element *curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+           
+                if (toLower(data[i]) == toLower(searchData[j])) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        positions.insert(Position(position,0));
+                        break;
+                    }
+                }
+                i++;
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return positions;
+}
+List List::containsSequence_i_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        Element *curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+           
+                if (toLower(data[i]) == toLower(searchData[j])) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        list.insert(curr->getData());
+                        break;
+                    }
+                }
+                i++;
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return list;   
+}
+/* These functions delegate to the existing function ^
+ * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+ * An implicit wildcard in front of, behind, and between all chars in target search value.
+ * Basically a super wildcard match.
+ *
+ * Function: containsSequence
+ * Param:  Element &, the target value to search for in the list.
+ * return: bool
+ */
+bool List::containsSequence(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return containsSequence(target);
+}
+Positions List::containsSequence_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_p(target);
+}
+List List::containsSequence_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_z(target);
+}
+bool List::containsSequence_i(const Element &targetRef) 
 {
     Element * target = new Element(targetRef);
     return containsSequence_i(target);
+}
+Positions List::containsSequence_i_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_i_p(target);
+}
+List List::containsSequence_i_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_i_z(target);
 }
 
 /* This function is an explicit wildcard search. Requires explicit '*' wildcard search in Element target value.
@@ -758,21 +990,55 @@ bool List::wildcardSearch(Element *target)
         {
             if (wildcardSearch(curr->getData(), target->getData())) {
                 if (foundOne == false) {
-                    std::cout << "\n-------------------------BEGIN List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
                     foundOne = true;
                 }
                 found = true;
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
-        } while (curr != head);
+        } while(curr != head);
         if (found == true) {
-            std::cout << "-------------------------END List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+            //std::cout << "-------------------------END List WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
     return found;   
+}
+Positions List::wildcardSearch_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch(curr->getData(), target->getData())) {
+                positions.insert(Position(position,0));
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+List List::wildcardSearch_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch(curr->getData(), target->getData())) {
+                list.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return list;   
 }
 bool List::wildcardSearch_i(Element *target)
 {
@@ -781,25 +1047,58 @@ bool List::wildcardSearch_i(Element *target)
     int  position = 0;
     if (head != nullptr) {
         curr = head;
-        do    
+        do
         {
             if (wildcardSearch_i(curr->getData(), target->getData())) {
                 if (foundOne == false) {
-                    std::cout << "\n-------------------------BEGIN List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
                     foundOne = true;
                 }
                 found = true;
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
-        } while (curr != head);
+        } while(curr != head);
         if (found == true) {
-            std::cout << "-------------------------END List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
+            //std::cout << "-------------------------END List Case Insensitive WILDCARD Search: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
     return found;   
+}
+Positions List::wildcardSearch_i_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch_i(curr->getData(), target->getData())) {
+                positions.insert(Position(position,0));
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+List List::wildcardSearch_i_z(Element *target)
+{
+    List list;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch_i(curr->getData(), target->getData())) {
+                list.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return list;   
 }
 /* This function is a wildcard search. Requires explicit '*' wildcard search in Element target value.
  * Delegates to the existing wildcardSearch function ^ 
@@ -808,15 +1107,35 @@ bool List::wildcardSearch_i(Element *target)
  * Param:  Element, explicit wildcard value to find in the list
  * return: bool
  */
-bool List::wildcardSearch(const Element &targetRef)
+bool List::wildcardSearch(const Element &targetRef) 
 {
     Element * target = new Element(targetRef);
     return wildcardSearch(target);
 }
-bool List::wildcardSearch_i(const Element &targetRef)
+Positions List::wildcardSearch_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_p(target);
+}
+List List::wildcardSearch_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_z(target);
+}
+bool List::wildcardSearch_i(const Element &targetRef) 
 {
     Element * target = new Element(targetRef);
     return wildcardSearch_i(target);
+}
+Positions List::wildcardSearch_i_p(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_i_p(target);
+}
+List List::wildcardSearch_i_z(const Element &targetRef) 
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_i_z(target);
 }
 /* This function is a wildcard search helper.
  * 
@@ -889,6 +1208,8 @@ bool List::wildcardSearch_i(const char *str, const char *pattern)
     return (pattern[patternIndex] == '\0');         // If we've consumed the entire pattern, it's a match
 }
 
+
+
 // vvvvvvvvvvvvvvvvvvvvvvvvvvv--------------------------------------------------------------------------- 
 //
 // Operator Overload Functions
@@ -932,14 +1253,14 @@ List & List::operator=(const List &other)
  */
 List & List::operator=(List &&other)  
 {
-    std::cout << "move assignment called" << std::endl;
+    //std::cout << "move assignment called" << std::endl;
     if (this != &other) {
         this->clear();                     // Clear the current list
         this->head = other.head;           // Move elements from the other list
         this->totalMemUsed = other.getMemUsed();
         other.head = nullptr;              // Dereference other's head
         other.clear();                     // Clear other to an empty list to prevent unexpected behavior
-        std::cout << this << " " << &other << std::endl;
+      //  std::cout << this << " " << &other << std::endl;
     }
     return *this;
 }
