@@ -15,12 +15,14 @@ private:
     Matrix     matrix;      // 2D Matrix to represent the Object.
     Properties properties;  // Properties to define properties of the Object
     Position   position;    // Position to locate the Object in Space.
+    Object * next;
 public:
     inline Object() : name("NULL"), space(), matrix(), properties(), position(){};
 
     inline Object(const Element & name)                           : name(name),   // Param Constructor
                                                                     space(name),
-                                                                    matrix(3,3,name), 
+                                                                    matrix(), 
+                                                                    //matrix(3,3,name), 
                                                                     properties(), 
                                                                     position()
                                                                    {this->properties.insert(Element("Name"),Element(name));};
@@ -31,6 +33,35 @@ public:
                                                                     properties(),
                                                                     position()
                                                                    {this->properties.insert(Element("Name"),Element(name));};
+    
+    inline Object(const Element & name, Space &space)             : name(name),   // Param Constructor
+                                                                    space(space), 
+                                                                    matrix(), 
+                                                                    properties(),
+                                                                    position()
+                                                                   {this->properties.insert(Element("Name"),Element(name));};
+    
+    inline Object(const Element & name, Matrix &matrix)           : name(name),   // Param Constructor
+                                                                    space(), 
+                                                                    matrix(matrix), 
+                                                                    properties(),
+                                                                    position()
+                                                                   {};
+    
+    inline Object(const Element & name, const Matrix &matrix)           : name(name),   // Param Constructor
+                                                                    space(), 
+                                                                    matrix(matrix), 
+                                                                    properties(),
+                                                                    position()
+                                                                   {};
+    inline       Object * setNext(Object * direction)
+                    {this->next = direction;return this;};        // Set pointer to next
+    
+    inline const Object * getNext() const {return next;};         // Get Next
+    inline       Object * getNext()       {return next;};         // Get Next
+   
+    inline int size(){return space.size();};
+    inline int trueSize(){return space.trueSize() * space.size();};
 
     void rename(const Element &);
 
@@ -56,6 +87,14 @@ public:
     bool setProperty(const Property &);
     bool setProperty(const Element  &, const Element &);
     bool setProperty(const Element  &, const String  &);
+    inline void setProperties(const Properties & properties) {
+                                this->properties = properties;}
+
+    inline void setMatrix(const Matrix & matrix) {this->matrix = matrix;}
+
+    inline void setName(const Element & name) {this->name = name;}
+
+    inline void setSpace(const Space & space) {this->space = space;}
 
     void setMatrixValue (int row, int col, const Element &);
     void setMatrixValues(const Element &);
@@ -75,10 +114,14 @@ public:
     
     inline Element    const getName()       const {return name;      };
     inline Matrix     const getMatrix()     const {return matrix;    };
+    inline Space      const getSpace()      const {return space;     };
     inline Position   const getPosition()   const {return position;  };
     inline Properties const getProperties() const {return properties;};
     inline Element         &getName()             {return name;      };
     inline Matrix          &getMatrix()           {return matrix;    };
+    inline Space           &getSpace()            {return space;     };
     inline Position        &getPosition()         {return position;  };
     inline Properties      &getProperties()       {return properties;};
+
+    inline bool operator==(const Object  &other) const {return this->name == other.getName();};                      // Equality operator
 };
