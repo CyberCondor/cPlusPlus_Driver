@@ -7,26 +7,14 @@ String::String()                                         // Default Constructor
     totalMemUsed = sizeof(*this);
 }
 
-String::String(Element *value) : String()                          // Param Constructor
+String::String(Element *value) : String()                // Param Constructor
 {
     this->insert(value);
-    //curr          = value;
-    //head          = value;
-    //totalMemUsed += value->getMemUsed();
 }
 String::String(Element element) : String()
 {
     this->insert(element);
-    //head = new Element(element);
-    //curr = head;
-    //totalMemUsed += element.getMemUsed();
 }
-//String::String(const Element & element) : String()
-//{
-//    head = new Element(element);
-//    curr = head;
-//    totalMemUsed += element.getMemUsed();
-//}
 
 String::~String()                                        // Destructor!
 {
@@ -45,7 +33,7 @@ String::~String()                                        // Destructor!
     }
 }
 
-String::String(const String &other)  : String()                      // Copy Constructor 
+String::String(const String &other)  : String()          // Copy Constructor 
 {                               
     // Initialize head and curr pointers for the new string
     head = nullptr;
@@ -319,7 +307,37 @@ int String::size() const
     }
     else {return 0;}
     return result;
-}  
+} 
+
+Element String::getDataAtPosition(int pos) const   
+{
+    if(head == nullptr) {      // If no List 
+        return Element();
+    }                         
+    else
+    {   
+        Element * curr = head;
+        int counter = 0;
+        if (pos <= 0) {                   // Get head
+            return Element(curr->getData());
+        } 
+        else if (pos >= this->size()) {   // Get tail
+            while(curr->getNext() != head) 
+                curr = curr->getNext();   // Find end
+            return Element(curr->getData());
+        }
+        else                              // Insert at position
+        {
+            while(curr->getNext() != head && counter < pos)
+            {
+                curr = curr->getNext(); // Point to next ptr
+                counter++;              // Increment counter
+            }
+            return Element(curr->getData());
+        }
+    }
+    return Element();    // Return Empty Element by Default
+}
 
 /* This function prints detailed information about the memory of the String to standard out
  * 
@@ -516,19 +534,55 @@ bool String::findMatch(Element *target)
             {	
                 if(found == false) {
                     found = true;
-                    std::cout << "\n-------------------------BEGIN String FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
+                    //std::cout << "\n-------------------------BEGIN String FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
                 }
-                std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
+                //std::cout << "idx:(" << position << ") \tData:" << curr->getData() << std::endl;
             }
             curr = curr->getNext();
             position++;
         } while(curr != head);
         if (found == true) {
-            std::cout << "-------------------------END String FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
+            //std::cout << "-------------------------END String FIND MATCH: '" << target->getData() << "'------------------------" << std::endl;
         }
     }
     delete target;
     return found;   
+}
+Positions String::findMatch_p(Element *target)
+{
+    int  position = 0;
+    Positions positions;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp(curr->getData(), target->getData()) == 0)
+            {	
+                positions.insert(Position(position,0));
+            }
+            curr = curr->getNext();
+            position++;
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+String String::findMatch_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp(curr->getData(), target->getData()) == 0)
+            {
+                string.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return string;   
 }
 // CASE INSENSITIVE VERSION
 bool String::findMatch_i(Element *target)
@@ -557,6 +611,46 @@ bool String::findMatch_i(Element *target)
     delete target;
     return found;   
 }
+Positions String::findMatch_i_p(Element *target)
+{
+    int  position = 0;
+    Positions positions;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp_i(curr->getData(), target->getData()) == 0)
+            {	
+                positions.insert(Position(position,0));
+            }
+            curr = curr->getNext();
+            position++;
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+
+// CASE INSENSITIVE VERSION
+String String::findMatch_i_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if(strcmp_i(curr->getData(), target->getData()) == 0)
+            {	
+                string.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return string;   
+}
+
+
 /* This function finds matching target value in the String. Exact match logic.
  * Delegates to existing findMatch function ^
  * 
@@ -569,10 +663,30 @@ bool String::findMatch(const Element &targetRef)
     Element * target = new Element(targetRef);
     return findMatch(target);
 }
+Positions String::findMatch_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return findMatch_p(target);
+}
+String String::findMatch_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return findMatch_z(target);
+}
 bool String::findMatch_i(const Element &targetRef)
 {
     Element * target = new Element(targetRef);
     return findMatch_i(target);
+}
+Positions String::findMatch_i_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return findMatch_i_p(target);
+}
+String String::findMatch_i_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return findMatch_i_z(target);
 }
 
 /* Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
@@ -594,10 +708,8 @@ bool String::containsSequence(Element *target)
         {
             const char* data       = curr->getData();
             const char* searchData = target->getData();
-
             int i = 0;
             int j = 0;
-
             while (data[i] != '\0') {
        
                 if (data[i] == searchData[j]) {
@@ -629,8 +741,7 @@ bool String::containsSequence(Element *target)
     delete target;
     return foundOne;   
 }
-/* This function delegates to the existing containsSequence function ^
- * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+/* Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
  * An implicit wildcard in front of, behind, and between all chars in target search value.
  * Basically a super wildcard match.
  *
@@ -638,12 +749,66 @@ bool String::containsSequence(Element *target)
  * Param:  Element &, the target value to search for in the string.
  * return: bool
  */
-bool String::containsSequence(const Element &targetRef)
+Positions String::containsSequence_p(Element *target)
 {
-    Element * target = new Element(targetRef);
-    return containsSequence(target);
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+       
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0')
+                    {   
+                        positions.insert(Position(position,0));
+                        break;
+                    }
+                }
+                i++;
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return positions;   
 }
-
+String String::containsSequence_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+       
+                if (data[i] == searchData[j]) {
+                    j++;
+                    if (searchData[j] == '\0')
+                    {
+                        string.insert(curr->getData());
+                        break;
+                    }
+                }
+                i++;
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return string;   
+}
 /* Case insensitive super wildcard search.
  * Contains Chars in Sequence | e.g. car, aM, ham, CAm, (etc.) contained in CHarM
  * An implicit wildcard in front of, behind, and between all chars in target search value.
@@ -682,7 +847,7 @@ bool String::containsSequence_i(Element *target)
                     std::cout << "\n-------------------------BEGIN String Case Insensitive CONTAINS Sequence: '" << target->getData() << "'------------------------" << std::endl;
                 }
                 std::cout << "idx:(" << position << ") \tData:" << data << std::endl;
-                found = false; // reset fount for next.
+                found = false; // reset found for next.
             }
             
             curr = curr->getNext();
@@ -695,11 +860,102 @@ bool String::containsSequence_i(Element *target)
     delete target;
     return foundOne;   
 }
-// Case insensitive super wildcard search - delegates to existing ^
+Positions String::containsSequence_i_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        Element *curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+           
+                if (toLower(data[i]) == toLower(searchData[j])) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        positions.insert(Position(position,0));
+                        break;
+                    }
+                }
+                i++;
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return positions;   
+}
+String String::containsSequence_i_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        Element *curr = head;
+        do
+        {
+            const char* data       = curr->getData();
+            const char* searchData = target->getData();
+            int i = 0;
+            int j = 0;
+            while (data[i] != '\0') {
+           
+                if (toLower(data[i]) == toLower(searchData[j])) {
+                    j++;
+                    if (searchData[j] == '\0') {
+                        string.insert(curr->getData());
+                        break;
+                    }
+                }
+                i++;
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    delete target;
+    return string;   
+}
+/* These functions delegate to the existing functions ^
+ * Contains Chars in Sequence | e.g. car, aM, haM, caM, (etc.) contained in charM
+ * An implicit wildcard in front of, behind, and between all chars in target search value.
+ * Basically a super wildcard match.
+ *
+ * Function: containsSequence
+ * Param:  Element &, the target value to search for in the string.
+ * return: bool
+ */
+bool String::containsSequence(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return containsSequence(target);
+}
+Positions String::containsSequence_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_p(target);
+}
+String String::containsSequence_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_z(target);
+}
 bool String::containsSequence_i(const Element &targetRef)
 {
     Element * target = new Element(targetRef);
     return containsSequence_i(target);
+}
+Positions String::containsSequence_i_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_i_p(target);
+}
+String String::containsSequence_i_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return containsSequence_i_z(target);
 }
 
 /* This function is an explicit wildcard search. Requires explicit '*' wildcard search in Element target value.
@@ -735,6 +991,40 @@ bool String::wildcardSearch(Element *target)
     delete target;
     return found;   
 }
+Positions String::wildcardSearch_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch(curr->getData(), target->getData())) {
+                positions.insert(Position(position,0));
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+String String::wildcardSearch_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch(curr->getData(), target->getData())) {
+                string.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return string;   
+}
 bool String::wildcardSearch_i(Element *target)
 {
     bool found    = false;
@@ -762,6 +1052,40 @@ bool String::wildcardSearch_i(Element *target)
     delete target;
     return found;   
 }
+Positions String::wildcardSearch_i_p(Element *target)
+{
+    Positions positions;
+    int       position = 0;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch_i(curr->getData(), target->getData())) {
+                positions.insert(Position(position,0));
+            }
+            position++;
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return positions;   
+}
+String String::wildcardSearch_i_z(Element *target)
+{
+    String string;
+    if (head != nullptr) {
+        curr = head;
+        do
+        {
+            if (wildcardSearch_i(curr->getData(), target->getData())) {
+                string.insert(curr->getData());
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    }
+    delete target;
+    return string;   
+}
 /* This function is a wildcard search. Requires explicit '*' wildcard search in Element target value.
  * Delegates to the existing wildcardSearch function ^ 
  *
@@ -774,10 +1098,30 @@ bool String::wildcardSearch(const Element &targetRef)
     Element * target = new Element(targetRef);
     return wildcardSearch(target);
 }
+Positions String::wildcardSearch_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_p(target);
+}
+String String::wildcardSearch_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_z(target);
+}
 bool String::wildcardSearch_i(const Element &targetRef)
 {
     Element * target = new Element(targetRef);
     return wildcardSearch_i(target);
+}
+Positions String::wildcardSearch_i_p(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_i_p(target);
+}
+String String::wildcardSearch_i_z(const Element &targetRef)
+{
+    Element * target = new Element(targetRef);
+    return wildcardSearch_i_z(target);
 }
 /* This function is a wildcard search helper.
  * 
@@ -875,7 +1219,7 @@ String & String::operator=(const String &other)
             {
                 this->insert(new Element(*otherCurr)); // Copy the Element element
                 otherCurr = otherCurr->getNext();
-            } while (otherCurr != other.head);
+            } while (otherCurr != other.head);  
         } 
     }
     return *this;
@@ -893,14 +1237,15 @@ String & String::operator=(const String &other)
  */
 String & String::operator=(String &&other)  
 {
-    std::cout << "move assignment called" << std::endl;
+    //std::cout << "move assignment called" << std::endl;
     if (this != &other) {
+        //std::cout << other.head->getData() << std::endl;
         this->clear();                     // Clear the current string
         this->head = other.head;           // Move elements from the other string
         this->totalMemUsed = other.getMemUsed();
         other.head = nullptr;              // Dereference other's head
         other.clear();                     // Clear other to an empty string to prevent unexpected behavior
-        std::cout << this << " " << &other << std::endl;
+        //std::cout << this << " " << &other << std::endl;
     }
     return *this;
 }
@@ -1016,7 +1361,7 @@ std::ostream & operator<<(std::ostream &out, String string) // Stream output ope
         do 
         {
             if(curr->getNext() != string.getHead()){
-                out << *curr << " "; // Call the Element's stream output operator
+                out << *curr << ", "; // Call the Element's stream output operator
             }
             else{out << *curr;}
             curr = curr->getNext();
