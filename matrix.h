@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include "list.h"
 #include "element.h"
 #include "positions.h"
 #include "position.h"
+
 // A matrix is also known as a 2D plane - it's just a plot of points or like an Excel spreadsheet.
 class Matrix {
 private:
@@ -27,10 +29,31 @@ public:
     Matrix(int, int, int);                  // Constructor to create a matrix with the specified number of rows and columns and z
     Matrix(int, int,      const Element  &);// Constructor to create a matrix with the specified number of rows and columns & a default Element
     Matrix(int, int, int, const Element  &);// Constructor to create a matrix with the specified number of rows and columns & a default Element
+    Matrix(const char * filePath);
+
+    bool importCsv(const char * filePath);
 
     void transpose();
 
     void resize(int, int);
+
+    Positions getPositions(const Element &) const;
+
+    Matrix getMatrixWhereElementIs        (const Element &) const;
+    Matrix getMatrixWhereElementIs_i      (const Element &) const;
+    Matrix getMatrixWhereElementLike      (const Element &) const;
+    Matrix getMatrixWhereElementLike_i    (const Element &) const;
+    Matrix getMatrixWhereElementContains  (const Element &) const;
+    Matrix getMatrixWhereElementContains_i(const Element &) const;
+    Matrix getMatrixWhereElementInPositions(Positions) const;
+
+    Matrix getPropertyFrequencies() const;
+    Matrix getPropertyFrequencies(const Element & propertyKey) const;
+
+    void consolidateEmptyPositions();
+    int removeEmptyRows();
+    bool removeRow(int);
+    bool removeColumn(int);
 
     Element getValue  (int, int) const;
     Element getValue_i(int, int) const;
@@ -71,9 +94,9 @@ public:
     void setValuesDiagonal_UpperLeftToBottomRight(const Element &);
     void setValuesDiagonal_UpperRightToBottomLeft(const Element &);
 
-    inline int      getNumRows()  const {return numRows;};
-    inline int      getNumCols()  const {return numCols;};
-    inline Position getPosition() const {return position;};
+    inline int        getNumRows()    const {return numRows;};
+    inline int        getNumCols()    const {return numCols;};
+    inline Position   getPosition()   const {return position;};
     inline void     setPosition(  const Position & pos) {
                             this->position.setX(pos.getX());
                             this->position.setY(pos.getY());
@@ -86,4 +109,10 @@ public:
     inline       Matrix * getNext()      {return next;};
     inline       Matrix * setNext(Matrix * direction)         // Setter for the next Position in the linked list
                     {this->next = direction;return this;};
+    
+    inline int size() const {return this->numRows * this->numCols;};
+
+    Matrix & operator= (const Matrix &other);         // Copy assignment operator
+    bool     operator==(const Matrix  &other) const;  // Equality operator
+    bool     operator!=(const Matrix  &other) const;  // Equality operator
 };
