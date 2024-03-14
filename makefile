@@ -30,3 +30,7 @@ rn:     *.h *.cpp
 	clear
 	g++ -g -Wall -std=c++17 -o main *.cpp
 	valgrind -s --leak-check=full ./main
+csv:     *.h *.cpp
+	clear
+	g++ -g -Wall -std=c++17 -o main *.cpp
+	valgrind -s --leak-check=full ./main ./CSVs/*.csv
