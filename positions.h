@@ -31,6 +31,7 @@ public:
     void     print(  const Position &);                               // Display a Position if found.
     bool     findPos(const Position &);                               // Display a Position if found. return true if found, false if not found
     Position getPos( const Position &);                               // Display a Position if found. return Position if found, empty Position if not found
+    Position getPos(       int       );                               // Display a Position if found. return Position if found, empty Position if not found
     
     int  size() const;                                                // Size Accessor - Returns size of Positions
   
