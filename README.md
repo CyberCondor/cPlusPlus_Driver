@@ -1,10 +1,27 @@
 # cPlusPlus_Driver
 <sub><sup>Custom C++ libraries to showcase dynamic memory allocation using circular linked lists.</sup></sub><br>
 
-This code demonstrates dynamic memory allocation in C++ using circular linked lists.
-I wrote some of this code back in Computer Science 2 class and have since revisited it to better understand C++ and computer memory usage of programs during runtime.
+Import CSV Files into Objects
 
-This code is a work in progress. *Some* methods have not yet been fuzz tested.
+This main looks for csv files in the runtime arguments. For csv files found in argument list, it imports the csv as a matrix object into a circular linked list of objects. Correlations are made between the csv file data property values and all other csv files. Then this main displays objects identified during object import based on the data in the csv files found in arguments during runtime.
+
+e.g.,
+```shell
+make
+./main *.csv
+```
+```shell
+./main ../path/to/csv/*.csv
+```
+```shell
+./main ./path/to/csv/file.csv
+```
+```shell
+make csv
+```
+```shell
+make run
+```
 
 #
 #
