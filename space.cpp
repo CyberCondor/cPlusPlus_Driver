@@ -25,16 +25,11 @@ Space::Space()                                         // Default Constructor
 Space::Space(Matrix *value) : Space()                  // Param Constructor
 {
     this->insert(value);
-    //curr = value;
-    //head = value;
 }
 
 Space::Space(Matrix value) : Space()                   // Param Constructor
 {
     this->insert(value);
-    //Matrix * p = new Matrix(value);
-    //curr       = p;
-    //head       = p;
 }
 
 Space::Space(const Element & value) : Space()          // Param Constructor
@@ -101,10 +96,6 @@ Space::Space(int x, int y, int z)        : Space()               // Param Constr
 
 Space::Space(const Space &other)             : Space()              // Copy Constructor 
 {                               
-    //// Initialize head and curr pointers for the new space
-    //head = nullptr;
-    //curr = nullptr;
-
     // Copy each matrix from the other space to the new space
     if (other.head != nullptr) {
         Matrix *otherCurr = other.head;
@@ -135,12 +126,14 @@ void Space::clear()                                   // Completely clear a Spac
         do 
         {   // Traverse the circular linked space and delete nodes
             next = curr->getNext();
-            delete curr;
+            if(curr != nullptr){
+                delete curr;
+            }
             curr = next;
         }while (curr != head);
         head = nullptr; // Reset the head pointer
     }
-    else{std::cout << "cannot clear empty Space" <<std::endl;}
+    //else{std::cout << "cannot clear empty Space" <<std::endl;}
 }
 
 /* This function inserts an Matrix at a specfied matrix.
@@ -378,6 +371,20 @@ int Space::size() const
     else {return 0;}
     return result;
 }  
+size_t Space::trueSize() const
+{
+    size_t result = 1;
+    if (head != nullptr) {
+        Matrix * curr = head;
+        while(curr->getNext() != head)
+        {
+            result += curr->size();
+            curr = curr->getNext();
+        }
+    }
+    else {return 0;}
+    return result;
+}  
 
 /* This function prints the Space to standard out
  * 
@@ -424,9 +431,9 @@ void Space::print() const
             if(0 == i) {
                 Matrix matrix(this->size(),curr->getNumCols() + this->size());
 
-                std::cout << "\n";
+                //std::cout << "\n";
                 
-                int rowSeparator = this->size();
+                //int rowSeparator = this->size();
 
                 Matrix * curr2 = curr;
 
@@ -479,41 +486,41 @@ void Space::print() const
 
 
                 //matrix.print();
-                for (ii = 0; ii < this->size(); ii++) {
-                    for (int jj = 0; jj < curr->getNumCols() + ii; jj++) {
-                      
-                        if(matrix.getValue(ii, jj).getData() == nullptr) {
-                            std::cout << std::setw(maxW_inner[jj] + 1) << "-";
-                        }
+             //   for (ii = 0; ii < this->size(); ii++) {
+             //       for (int jj = 0; jj < curr->getNumCols() + ii; jj++) {
+             //         
+             //           if(matrix.getValue(ii, jj).getData() == nullptr) {
+             //               std::cout << std::setw(maxW_inner[jj] + 1) << "-";
+             //           }
 
 
-                        
-                        if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj]) + curr->getNumCols() + (this->size() - ii) - maxW_inner[jj] - 1) << "|";}
-                        //if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj]) + maxColumnWidth[0] - maxW_inner[jj]) << "|";}
-                        //if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj])) << "|";}
-                       
+             //           
+             //           if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj]) + curr->getNumCols() + (this->size() - ii) - maxW_inner[jj] - 1) << "|";}
+             //           //if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj]) + maxColumnWidth[0] - maxW_inner[jj]) << "|";}
+             //           //if(0 == jj){std::cout << std::setw((rowSeparator-- * maxW_inner[jj])) << "|";}
+             //          
 
-                        if(jj == curr->getNumCols()) {
-                            std::cout << "|";
-                        }
-                        if (matrix.getNumCols() <= (curr->getNumCols() - matrix.getNumCols()) - jj) {
-                            std::cout << std::setw(maxW_inner[jj] + 1) << jj;
-                        }
-                        else if(jj >= curr->getNumCols()) {
-                            std::cout << std::setw(maxW_inner[jj] + 1) << matrix.getValue(ii, jj);
-                        }
-                        else if(curr2->getNumCols() >= curr->getNumCols()){
-                            std::cout << std::setw(maxW_inner[jj]) << matrix.getValue(ii, jj);
-                        }
-                        else{
-                            std::cout << std::setw(maxW_inner[jj] + 1) << matrix.getValue(ii, jj);
-                        }
-                        if (jj < curr->getNumCols() - 1) {
-                            std::cout << ' ';
-                        }
-                    }
-                    std::cout << std::endl;
-                }
+             //           if(jj == curr->getNumCols()) {
+             //               std::cout << "|";
+             //           }
+             //           if (matrix.getNumCols() <= (curr->getNumCols() - matrix.getNumCols()) - jj) {
+             //               std::cout << std::setw(maxW_inner[jj] + 1) << jj;
+             //           }
+             //           else if(jj >= curr->getNumCols()) {
+             //               std::cout << std::setw(maxW_inner[jj] + 1) << matrix.getValue(ii, jj);
+             //           }
+             //           else if(curr2->getNumCols() >= curr->getNumCols()){
+             //               std::cout << std::setw(maxW_inner[jj]) << matrix.getValue(ii, jj);
+             //           }
+             //           else{
+             //               std::cout << std::setw(maxW_inner[jj] + 1) << matrix.getValue(ii, jj);
+             //           }
+             //           if (jj < curr->getNumCols() - 1) {
+             //               std::cout << ' ';
+             //           }
+             //       }
+             //       std::cout << std::endl;
+             //   }
                 for (int j = 0; j < curr->getNumCols(); j++) {
                     std::cout << std::setw(maxColumnWidth[j]) << "__";
                     if (j < curr->getNumCols() - 1) {
@@ -527,7 +534,7 @@ void Space::print() const
                 
 
                 if(j + 1 == curr->getNumCols() && i < curr->getNumRows() - 1){
-                    std::cout << std::setw(maxColumnWidth[j]) << curr->getValue(i, j) << "|";
+                    std::cout << std::setw(maxColumnWidth[j]) << curr->getValue(i, j); //<< "|";
                     
                     
                     Matrix * curr2 = curr;
@@ -536,10 +543,10 @@ void Space::print() const
                     {
                             if (curr2->getNext()->getValue(i + 1 + jj ,curr2->getNext()->getNumCols() - 1).getData() == nullptr){
                                 //std::cout << std::setw(maxW_inner[jj]) << "-";  
-                                std::cout << std::setw(maxW_inner[jj] + (jj/this->size()) + 1) << "-";  
+                    //            std::cout << std::setw(maxW_inner[jj] + (jj/this->size()) + 1) << "-";  
                             }
                             else{
-                                std::cout << std::setw(maxW_inner[jj] + (jj/this->size()) + 1) << curr2->getNext()->getValue(i + 1 + jj ,curr2->getNext()->getNumCols() - 1);
+                    //            std::cout << std::setw(maxW_inner[jj] + (jj/this->size()) + 1) << curr2->getNext()->getValue(i + 1 + jj ,curr2->getNext()->getNumCols() - 1);
                             }
                         jj++;
                         curr2 = curr2->getNext();
@@ -600,20 +607,62 @@ bool Space::findPos(const Matrix & pos)
     return found;
 }
 
-Matrix Space::getPos(const Matrix & pos) 
+//Matrix Space::getPos(const Matrix & pos) const 
+//{ 
+//    if (head == nullptr) {
+//        std::cout << "Space is empty." << std::endl;
+//        return Matrix();
+//    } 
+//    Matrix * curr = head;
+//    do 
+//    {   if (curr->getPosition() == pos.getPosition()) {
+//            return Matrix(curr->getPosition());
+//        }
+//		curr = curr->getNext();
+//    } while(curr != head);
+//    return Matrix();
+//}
+Matrix Space::getPos(int pos) const 
 { 
     if (head == nullptr) {
         std::cout << "Space is empty." << std::endl;
         return Matrix();
-    } 
-    curr = head;
+    }
+    int count = 0;
+    Matrix * curr = head;
     do 
-    {   if (curr->getPosition() == pos.getPosition()) {
-            return Matrix(curr->getPosition());
+    {   if (count == pos) {
+            return Matrix(*curr);
         }
+        count++;
 		curr = curr->getNext();
     } while(curr != head);
     return Matrix();
+}
+
+void Space::setPropertyFrequencies(const Matrix & matrix)
+{
+    this->clear();                                // Clear the current space
+    for(int i = 0; i < matrix.getNumCols(); i++) {
+        Matrix spacetrix(matrix.getPropertyFrequencies(matrix.getRows()[0].getDataAtPosition(i)));
+        spacetrix.setPosition(Position(0,0,i));
+        if (head != nullptr) {
+            bool foundDuplicate = false; 
+            curr = head;
+            do 
+            {   if (*curr == spacetrix) {
+                    foundDuplicate = true;
+                }
+	        	curr = curr->getNext();
+            } while(curr != head);
+            if(foundDuplicate != true) {
+                this->insert(spacetrix);
+            }
+        }
+        else{
+            this->insert(spacetrix);
+        }
+    }
 }
 
 // vvvvvvvvvvvvvvvvvvvvvvvvvvv--------------------------------------------------------------------------- 
@@ -632,9 +681,9 @@ Matrix Space::getPos(const Matrix & pos)
  */
 Space & Space::operator=(const Space &other)  
 {
-    std::cout << "copy assignment called" << std::endl;
+    //std::cout << "copy assignment called" << std::endl;
     if (this != &other) {
-        this->clear();                                 // Clear the current space
+        this->clear();                                // Clear the current space
         Matrix *otherCurr = other.head;               // Copy space from the other space
         if(otherCurr != nullptr) {
             do 
