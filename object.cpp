@@ -5,7 +5,7 @@ void Object::rename(const Element & name)
     Element e(name); //// ~!!!!!!!!! need Element copy and move constructors for this->name = name;
     this->name.setData(e.getData());
     this->properties.insert(Element("Name"),e);
-    this->setMatrixValues(e);
+    //this->setMatrixValues(e);
 }
 
 void Object::print() const
@@ -13,9 +13,14 @@ void Object::print() const
     std::cout << "Object: ";
     std::cout << name << "\n" << std::endl; // Print the name using the Element class
     this->properties.print();
-    this->matrix.print();           // Delegate printing to the matrix
-    this->space.print();            // Delegate printing to object space
+    if(this->matrix.getNumRows() > 1) {
+        this->matrix.print();           // Delegate printing to the matrix
+    }
+    if(this->space.size() > 0) {
+        this->space.print();            // Delegate printing to object space
+    }
 }
+
 
 void Object::setDefaultProperties()
 {
