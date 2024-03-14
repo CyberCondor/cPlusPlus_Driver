@@ -39,15 +39,20 @@ public:
     void   print()  const;                                         // Display information about the Space  
     void   print(   const Matrix &);                               // Display a Matrix if found.
     bool   findPos( const Matrix &);                               // Display a Matrix if found. return true if found, false if not found
-    Matrix getPos(  const Matrix &);                               // Display a Matrix if found. return Matrix if found, empty Matrix if not found
+    Matrix getPos(  const Matrix &) const;                               // Display a Matrix if found. return Matrix if found, empty Matrix if not found
+    Matrix getPos(  int pos) const;                                // Display a Matrix if found. return Matrix if found, empty Matrix if not found
     
     int  size() const;                                             // Size Accessor - Returns size of Space
+    size_t  trueSize() const;                                      // Size Accessor - Returns size of Space
   
     inline size_t      getMemUsed() const {return totalMemUsed;};  // Get Memory Size of this Space  
     inline const Matrix * getHead() const {return head;};          // Get Head
     inline       Matrix * getHead()       {return head;};          // Get Head
     inline       Matrix * setHead() const {return head;};          // Set Head  
+   
     
+    void setPropertyFrequencies(const Matrix &);
+
                                                                   //*Operator Overload Functions
     Space & operator= (const Space  &other);                      // Copy assignment operator
     Space & operator= (      Space &&other);                      // Move assignment operator
