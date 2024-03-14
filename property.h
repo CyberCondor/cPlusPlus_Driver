@@ -28,6 +28,7 @@ public:
     inline void setValue   (const Element & value) {this->value.insert(Element(value));};
     inline void setValue   (const String  & value) {this->value = value;};
     inline void appendValue(const Element & value) {this->value.insert(Element(value));};
+    inline void appendValue(const String & value)  {this->value = String(this->value + value);};
 
     inline void print()const { if(key.getData() != nullptr || value != String()) {
                                 std::cout << key <<": ";
