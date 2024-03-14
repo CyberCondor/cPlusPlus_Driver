@@ -45,6 +45,7 @@ public:
     inline void display() const {std::cout << "(" << x << "," << y << ")->" << z;};                            // Display the position
     inline void print(  ) const {std::cout << "(" << x << "," << y << ")->" << z << std::endl;};               // Display the position
 
+
     inline const Position * getNext()      const{return next;};
     inline       Position * getNext()           {return next;};
     inline       Position * setNext(Position * direction)   // Setter for the next Position in the linked list
@@ -55,3 +56,56 @@ public:
         return out;
     }; 
 };
+
+
+
+
+//void Position::TEST()
+//{
+//    // Create Position objects and demonstrate their usage
+//    Position position1; // Default constructor
+//    Position position2(8, 8); // Parameterized constructor
+//
+//    position1.display();
+//    position2.display();
+//
+//    position1.move(4, 4);
+//    position1.display();
+//
+//    double distance = position1.distanceTo(position2);
+//    double distance2 = position2.distanceTo(position1);
+//    std::cout << "Distance between position1 and position2: " << distance << std::endl;
+//    std::cout << "Distance between position2 and position1: " << distance2 << std::endl;
+//
+//    Position sum = position1 + position2;
+//    sum.display();
+//
+//    Position difference = position1 - position2;
+//    difference.display();
+//
+//    if (position1 == position2) {
+//        std::cout << "position1 and position2 are equal." << std::endl;
+//    } else {
+//        std::cout << "position1 and position2 are not equal." << std::endl;
+//    }
+//
+//    std::cout << "Absolute difference between position1 and position2: ";
+//    Position diff = position1.absoluteDifference(position2);
+//    diff.display();
+//}
+
+
+// The Euclidean distance reflects the intuitive notion of distance that we learn in elementary geometry.
+// It's the shortest path between two points in a plane, and it corresponds to what we perceive as the straight-line distance in physical space.
+
+// The formula for Euclidean distance is derived from the Pythagorean theorem, which is a fundamental principle in geometry.
+// This theorem states that in a right-angled triangle, the square of the length of the hypotenuse is equal to the sum of the squares of the other two sides.
+// The Euclidean distance formula essentially applies this theorem to calculate distances in two-dimensional space.
+
+// The Euclidean distance can be extended to higher dimensions (3D, 4D, etc.) and even to more abstract vector spaces.
+// It serves as a basis for defining distances in various contexts, including physics, computer graphics, machine learning, and optimization.
+
+// The Euclidean distance satisfies the properties of a metric space, which means it adheres to the three fundamental properties of a metric:
+   //   Non-negativity: The distance between two points is always non-negative.
+   //   Identity of indiscernibles: The distance between two points is zero if and only if the two points are the same.
+   //   Triangle Inequality: The sum of the distances between three points is greater than or equal to the distance between any two of the three points
