@@ -74,7 +74,7 @@ void Positions::clear()                                   // Completely clear a 
         }while (curr != head);
         head = nullptr; // Reset the head pointer
     }
-    else{std::cout << "cannot clear empty Positions" <<std::endl;}
+    //else{std::cout << "cannot clear empty Positions" <<std::endl;}
 }
 
 /* This function inserts an Position at a specfied position.
@@ -322,7 +322,7 @@ int Positions::size() const
 void Positions::print()
 { 
     if (head == nullptr) {
-        std::cout << "Positions is empty." << std::endl;
+        //std::cout << "Positions is empty." << std::endl;
         return;
     } 
     
@@ -346,7 +346,7 @@ void Positions::print()
 void Positions::print(const Position & pos) 
 { 
     if (head == nullptr) {
-        std::cout << "Positions is empty." << std::endl;
+        //std::cout << "Positions is empty." << std::endl;
         return;
     } 
     curr = head;
@@ -361,7 +361,7 @@ void Positions::print(const Position & pos)
 bool Positions::findPos(const Position & pos) 
 { 
     if (head == nullptr) {
-        std::cout << "Positions is empty." << std::endl;
+        //std::cout << "Positions is empty." << std::endl;
         return false;
     }
     bool found = false;
@@ -379,7 +379,7 @@ bool Positions::findPos(const Position & pos)
 Position Positions::getPos(const Position & pos) 
 { 
     if (head == nullptr) {
-        std::cout << "Positions is empty." << std::endl;
+        //std::cout << "Positions is empty." << std::endl;
         return Position();
     } 
     curr = head;
@@ -387,6 +387,23 @@ Position Positions::getPos(const Position & pos)
     {   if (curr->getX() == pos.getX() && curr->getY() == pos.getY()) {
             return Position(curr->getX(),curr->getY());
         }
+		curr = curr->getNext();
+    } while(curr != head);
+    return Position();
+}
+Position Positions::getPos(int position) 
+{ 
+    if (head == nullptr) {
+        //std::cout << "Positions is empty." << std::endl;
+        return Position();
+    } 
+    curr = head;
+    int pos = 0;
+    do 
+    {   if (pos == position) {
+            return Position(curr->getX(),curr->getY());
+        }
+        pos++;
 		curr = curr->getNext();
     } while(curr != head);
     return Position();
@@ -408,7 +425,7 @@ Position Positions::getPos(const Position & pos)
  */
 Positions & Positions::operator=(const Positions &other)  
 {
-    std::cout << "copy assignment called" << std::endl;
+    //std::cout << "copy assignment called" << std::endl;
     if (this != &other) {
         this->clear();                                 // Clear the current positions
         Position *otherCurr = other.head;               // Copy positions from the other positions
@@ -435,14 +452,14 @@ Positions & Positions::operator=(const Positions &other)
  */
 Positions & Positions::operator=(Positions &&other)  
 {
-    std::cout << "move assignment called" << std::endl;
+    //std::cout << "move assignment called" << std::endl;
     if (this != &other) {
         this->clear();                     // Clear the current positions
         this->head = other.head;           // Move positions from the other positions
         this->totalMemUsed = other.getMemUsed();
         other.head = nullptr;              // Dereference other's head
         other.clear();                     // Clear other to an empty positions to prevent unexpected behavior
-        std::cout << this << " " << &other << std::endl;
+        //std::cout << this << " " << &other << std::endl;
     }
     return *this;
 }
