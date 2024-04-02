@@ -150,7 +150,6 @@ bool Properties::insert(const Element & key, const String & value)
     return insert(newProperty);
 }
 
-
 bool Properties::findMatch(const Element & key, const Element & target)
 {
     bool found = false;
@@ -168,6 +167,25 @@ bool Properties::findMatch(const Element & key, const Element & target)
     } 
     return found;   
 }
+
+bool Properties::findMatch_i(const Element & key, const Element & target)
+{
+    bool found = false;
+    if (head != nullptr) {
+        Property * curr = head;
+        do
+        {   
+            if(strcmp_i(key.getData(), curr->getKey().getData()) == 0) {
+                if(curr->getValue().findMatch_i(target)) {
+                    found = true;
+                }
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    return found;   
+}
+
 Properties Properties::findMatch(const Element & target)
 {
     Properties properties;
@@ -187,30 +205,66 @@ Properties Properties::findMatch(const Element & target)
 Properties Properties::findMatch_i(const Element & target)
 {
     Properties properties;
-    int  position = 0;
     if (head != nullptr) {
         Property * curr = head;
         do
         {
-            properties.insert(curr->getKey(), curr->getValue().findMatch_i_z(target));
+            String string(curr->getValue().findMatch_z(target));
+            if(string != String()) {
+                properties.insert(curr->getKey(), curr->getValue().findMatch_z(target));
+            }
             curr = curr->getNext();
-            position++;
         } while(curr != head);
     } 
     return properties;   
 }
 
+bool Properties::containsSequence(const Element & key, const Element & target)
+{
+    bool found = false;
+    if (head != nullptr) {
+        Property * curr = head;
+        do
+        {   
+            if(key == curr->getKey()) {
+                if(curr->getValue().containsSequence(target)) {
+                    found = true;
+                }
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    return found;   
+}
+bool Properties::containsSequence_i(const Element & key, const Element & target)
+{
+    bool found = false;
+    if (head != nullptr) {
+        Property * curr = head;
+        do
+        {   
+            if(strcmp_i(key.getData(), curr->getKey().getData()) == 0) {
+                if(curr->getValue().containsSequence_i(target)) {
+                    found = true;
+                }
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    return found;   
+}
 Properties Properties::containsSequence(const Element & target)
 {
     Properties properties;
-    int  position = 0;
     if (head != nullptr) {
         Property * curr = head;
         do
         {
-            properties.insert(curr->getKey(), curr->getValue().containsSequence_z(target));
+            String string(curr->getValue().findMatch_z(target));
+            if(string != String()) {
+                properties.insert(curr->getKey(), curr->getValue().findMatch_z(target));
+            }
             curr = curr->getNext();
-            position++;
         } while(curr != head);
     } 
     return properties;   
@@ -218,29 +272,65 @@ Properties Properties::containsSequence(const Element & target)
 Properties Properties::containsSequence_i(const Element & target)
 {
     Properties properties;
-    int  position = 0;
     if (head != nullptr) {
         Property * curr = head;
         do
         {
-            properties.insert(curr->getKey(), curr->getValue().containsSequence_i_z(target));
+            String string(curr->getValue().findMatch_z(target));
+            if(string != String()) {
+                properties.insert(curr->getKey(), curr->getValue().findMatch_z(target));
+            }
             curr = curr->getNext();
-            position++;
         } while(curr != head);
     } 
     return properties;   
 }
+bool Properties::wildcardSearch(const Element & key, const Element & target)
+{
+    bool found = false;
+    if (head != nullptr) {
+        Property * curr = head;
+        do
+        {   
+            if(key == curr->getKey()) {
+                if(curr->getValue().wildcardSearch(target)) {
+                    found = true;
+                }
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    return found;   
+}
+bool Properties::wildcardSearch_i(const Element & key, const Element & target)
+{
+    bool found = false;
+    if (head != nullptr) {
+        Property * curr = head;
+        do
+        {   
+            if(strcmp_i(key.getData(), curr->getKey().getData()) == 0) {
+                if(curr->getValue().wildcardSearch_i(target)) {
+                    found = true;
+                }
+            }
+            curr = curr->getNext();
+        } while(curr != head);
+    } 
+    return found;   
+}
 Properties Properties::wildcardSearch(const Element & target)
 {
     Properties properties;
-    int  position = 0;
     if (head != nullptr) {
         Property * curr = head;
         do
         {
-            properties.insert(curr->getKey(), curr->getValue().wildcardSearch_z(target));
+            String string(curr->getValue().findMatch_z(target));
+            if(string != String()) {
+                properties.insert(curr->getKey(), curr->getValue().findMatch_z(target));
+            }
             curr = curr->getNext();
-            position++;
         } while(curr != head);
     } 
     return properties;   
@@ -248,17 +338,37 @@ Properties Properties::wildcardSearch(const Element & target)
 Properties Properties::wildcardSearch_i(const Element & target)
 {
     Properties properties;
-    int  position = 0;
     if (head != nullptr) {
         Property * curr = head;
         do
         {
-            properties.insert(curr->getKey(), curr->getValue().wildcardSearch_i_z(target));
+            String string(curr->getValue().findMatch_z(target));
+            if(string != String()) {
+                properties.insert(curr->getKey(), curr->getValue().findMatch_z(target));
+            }
             curr = curr->getNext();
-            position++;
         } while(curr != head);
     } 
     return properties;   
+}
+
+
+bool Properties::findKey(const Element & key) const
+{
+    if (head == nullptr) {return false;}
+
+    Property* curr = head;
+    String string;
+    bool found = false;
+    do
+    {
+        string.insert(curr->getKey());
+        curr = curr->getNext();
+    } while (curr != head);
+
+    if(string.findMatch_i(key)){found = true;}
+
+    return found;
 }
 
 Properties Properties::getKeys() const
@@ -298,6 +408,53 @@ Properties Properties::getProperties() const
 
     return properties;
 }
+Property Properties::getProperty(const Element & key) const
+{
+    Property property;
+    if (head == nullptr) {
+        std::cout << "No properties to display." << std::endl;
+        return property;
+    }
+
+    Property* curr = head;
+    do
+    {
+        if(curr->getKey() == key) {
+            return *curr;
+        }
+
+        curr = curr->getNext();
+    } while (curr != head);
+
+    return property;
+}
+
+Property Properties::getProperty(int pos) const
+{
+    Property property;
+    if (head == nullptr) {
+        std::cout << "No properties to display." << std::endl;
+        return property;
+    }
+    int position = 0;
+    Property* curr = head;
+    do
+    {
+        if(position == pos) {
+            return *curr;
+        }
+        position++;
+        curr = curr->getNext();
+    } while (curr != head);
+
+    return property;
+}
+
+
+
+
+
+
 
 void Properties::print() const
 {
