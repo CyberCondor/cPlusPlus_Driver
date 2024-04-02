@@ -7,6 +7,8 @@
 #include "list.h"
 #include "element.h"
 #include "positions.h"
+#include "property.h"
+#include "properties.h"
 
 class Objects
 {
@@ -34,8 +36,37 @@ public:
     void importObjects(const Matrix &, const Element &);
     void importObjects(const Space &);
     void importObjects(const Space &,  const List &);
+    void importAllObjects(const Space &);
+    void importAllObjects_i(const Space &);
     void importCSVs(const List &);
     void importCSVs(const List &, const List &);
+
+
+    Object getObject(int pos);
+
+    void getDeets();
+   
+    Objects where(const Element &, const Element &, const Element &);
+
+    Objects getObjectsBySpaceSize        (const int );
+    Objects getObjectsByMatrixSize       (const int );
+
+
+    List getSignificantPropertyKeys();
+
+
+    //void    consolidateBySignificantPropertyKeys();
+    Objects consolidatedBySignificantPropertyKeys();
+
+
+    Objects getObjectsFound(int numberOfTimesFound) ;
+    Objects getObjectsFoundIn(const List &) ;
+    Objects getObjectsFoundIn(const Element &) ;
+    Objects getObjectsNotFoundIn(const Element &) ;
+
+    List getListOfPropertyValues(const Element & key);
+    List getListOfPropertyValues();
+    List getListOfPropertyKeys();
 
     void print();                                                    // Display information about the Objects  
     
