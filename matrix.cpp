@@ -11,7 +11,7 @@ Matrix::~Matrix()
     setPosition(Position(0,0,0));
     next = nullptr;
 }
-Matrix::Matrix() : next(nullptr)
+Matrix::Matrix() : next(nullptr), name("NULL")
 {
     X       = nullptr;
     Y       = nullptr;
@@ -24,6 +24,7 @@ Matrix::Matrix() : next(nullptr)
 Matrix::Matrix(Matrix * other) : next(other->getNext())
 {
     this->setPosition(other->getPosition());
+    this->setName(other->getName());
     
     numRows = other->getNumRows();
     numCols = other->getNumCols();
@@ -50,6 +51,7 @@ Matrix::Matrix(Matrix * other) : next(other->getNext())
 Matrix::Matrix(const Matrix & other) : next(nullptr)
 {
     this->setPosition(other.getPosition());
+    this->setName(other.getName());
     
     numRows = other.getNumRows();
     numCols = other.getNumCols();
@@ -217,6 +219,8 @@ Matrix::Matrix(const char* filePath) : Matrix()
     {
         std::cerr << "Error opening file: " << filePath << std::endl;
     }
+
+    this->setName(Element(filePath)); 
     
     const int bufferSize = 4095;  // Assuming a max line length
     char buffer[bufferSize + 1];
@@ -296,6 +300,8 @@ bool Matrix::importCsv(const char* filePath)
         std::cerr << "Error opening file: " << filePath << std::endl;
         return false;
     }
+    
+    this->setName(Element(filePath)); 
     
     const int bufferSize = 4095;  // Assuming a max line length
     char buffer[bufferSize + 1];
@@ -474,6 +480,7 @@ Matrix Matrix::getMatrixWhereElementIs(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 Matrix Matrix::getMatrixWhereElementIs_i(const Element & element) const
@@ -494,6 +501,7 @@ Matrix Matrix::getMatrixWhereElementIs_i(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -515,6 +523,7 @@ Matrix Matrix::getMatrixWhereElementLike(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -536,6 +545,7 @@ Matrix Matrix::getMatrixWhereElementLike_i(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -557,6 +567,7 @@ Matrix Matrix::getMatrixWhereElementContains(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -578,6 +589,7 @@ Matrix Matrix::getMatrixWhereElementContains_i(const Element & element) const
             matrix.setValue(i, j, this->getValue(position.getX(),j));
         }
     }
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -589,7 +601,8 @@ Matrix Matrix::getMatrixWhereElementInPositions(Positions positions) const
         Position position(positions.getPos(i).getX(), positions.getPos(i).getY()); 
         matrix.setValue(i, position.getY(), this->getValue(position.getX(),position.getY()));
     }
-    matrix.print();
+    //matrix.print();
+    matrix.setName(this->getName());
     return matrix;
 }
 
@@ -688,6 +701,7 @@ Matrix Matrix::getPropertyFrequencies() const
     propertyFrequencies.consolidateEmptyPositions();
     propertyFrequencies.removeEmptyRows();
 
+    propertyFrequencies.setName(this->getName());
     return propertyFrequencies;
 }
 
@@ -764,6 +778,7 @@ Matrix Matrix::getPropertyFrequencies(const Element & propertyKey) const
     propertyFrequencies.consolidateEmptyPositions();
     propertyFrequencies.removeEmptyRows();
 
+    propertyFrequencies.setName(this->getName());
     return propertyFrequencies;
 }
 
@@ -1400,6 +1415,8 @@ Matrix & Matrix::operator=(const Matrix &other)
         this->resize(other.getNumRows(), other.getNumCols());
         this->setPosition(other.getPosition());
 
+        this->setName(other.getName());
+        
         for (int i = 0; i < numRows; i++) {
             this->rows[i].clear();
         }
