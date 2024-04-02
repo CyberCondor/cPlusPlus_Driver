@@ -18,6 +18,7 @@ private:
     int         numCols; // Number of columns
     Position    position;// Position in 3D space
     Matrix    * next;    // Next element to traverse 3D space
+    Element     name;
 public:
     ~Matrix();                              // Destructor!
     Matrix();                               // Default Constructor    
@@ -94,6 +95,7 @@ public:
     void setValuesDiagonal_UpperLeftToBottomRight(const Element &);
     void setValuesDiagonal_UpperRightToBottomLeft(const Element &);
 
+    inline Element    getName()       const {return name;};
     inline int        getNumRows()    const {return numRows;};
     inline int        getNumCols()    const {return numCols;};
     inline Position   getPosition()   const {return position;};
@@ -101,6 +103,7 @@ public:
                             this->position.setX(pos.getX());
                             this->position.setY(pos.getY());
                             this->position.setZ(pos.getZ());};
+    inline void      setName(const Element & name){this->name.setData(name.getData());};
 
     inline List *getRows()    const {return rows;};
     inline List *getColumns() const {return columns;};
