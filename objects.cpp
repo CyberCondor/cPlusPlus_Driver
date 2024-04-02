@@ -6,7 +6,7 @@ Objects::Objects()                                         // Default Constructo
     curr         = nullptr;
 }
 
-Objects::Objects(Object *value) : Objects()                          // Param Constructor
+Objects::Objects(Object *value) : Objects()                // Param Constructor
 {
     this->insert(value);
 }
@@ -32,7 +32,7 @@ Objects::~Objects()                                        // Destructor!
     }
 }
 
-Objects::Objects(const Objects &other)  : Objects()                      // Copy Constructor 
+Objects::Objects(const Objects &other)  : Objects()         // Copy Constructor 
 {                               
     // Initialize head and curr pointers for the new objects
     head = nullptr;
@@ -130,6 +130,7 @@ void Objects::insert(Object *target, int pos)
 bool Objects::insert(Object *value) // Insertion Mutator
 {
     int  position = 0;
+    bool found    = false;
     
     if (head == nullptr)            // If no Objects
     {
@@ -140,10 +141,23 @@ bool Objects::insert(Object *value) // Insertion Mutator
     {	curr = head;
         do
         {
+            if(strcmp(curr->getName().getData(), value->getName().getData()) == 0) {
+                found = true;      // Don't add to the list. Duplicate was found.
+                delete value;
+                break;
+            }
+            if(strcmp(curr->getName().getData(), value->getName().getData()) > 0) {
+                found = false;    // Sort list by title. Break and insert at position.
+                break;
+            }
             curr = curr->getNext();
             position++;
         }while(curr != head);
-        insert(value,position);
+        if(found == false) {
+            insert(value,position);
+            return true;	
+        }
+        else { return false; }
     }
     return true;	
 }
@@ -319,6 +333,7 @@ void Objects::importObjects(const Matrix & matrix)
                 properties.insert(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j));
             }
         }
+        properties.insert(Element("Found In"), matrix.getName()); 
         object.setProperties(properties);
 
         this->insert(object);
@@ -350,6 +365,7 @@ void Objects::importObjects(const Matrix & matrix, const Element & propertyName)
                 properties.insert(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j));
             }
         }
+        properties.insert(Element("Found In"), matrix.getName()); 
         object.setProperties(properties);
 
         this->insert(object);
@@ -423,6 +439,7 @@ void Objects::importObjects(const Space & space)
                 if(matrix2.getNumRows() > 1){
                     matrix2.setPosition(Position(0,0,spSz2));
                     space2.insert(matrix2);
+                    curr->addProperty(Element("Found In"), matrix2.getName()); 
                 }
             }
             if(curr->getMatrix().getNumRows() == 2) {
@@ -509,6 +526,7 @@ void Objects::importObjects(const Space & space, const List & propertyNames)
                 if(matrix2.getNumRows() > 1){
                     matrix2.setPosition(Position(0,0,spSz2));
                     space2.insert(matrix2);
+                    curr->addProperty(Element("Found In"), matrix2.getName()); 
                 }
             }
             if(curr->getMatrix().getNumRows() == 2) {
@@ -519,6 +537,169 @@ void Objects::importObjects(const Space & space, const List & propertyNames)
         } while(curr != head);
     }
 }
+
+void Objects::importAllObjects(const Space & space)
+{
+    int spaceSize = space.size();
+    if(spaceSize == 0) { return; }
+    
+    Positions positions;
+
+    for(int spSz = 0; spSz < spaceSize; spSz++) {
+        
+        Matrix matrix(space.getPos(spSz));
+
+        for(int i = 1; i < matrix.getNumRows(); i++) {
+
+            for(int col = 0; col < matrix.getNumCols(); col++) {
+
+                bool foundObj = false;
+                
+                Object object(matrix.getValue(i, col));
+                
+                curr = head;
+                if (!(head == nullptr)) {
+                    do 
+                    {
+                        if(curr->getName() == object.getName()) {
+                            foundObj = true;
+                            break;
+                        }
+	                	curr = curr->getNext();
+                    } while(curr != head);
+                }
+
+                if(foundObj == false) {
+                   
+                    Properties properties;
+                    
+                    for(int spSz2 = 0; spSz2 < spaceSize; spSz2++) {
+                        Matrix matrix2(space.getPos(spSz2).getMatrixWhereElementIs(matrix.getValue(i, col)));
+
+                        if(matrix2.getNumRows() > 1){
+                            object.setMatrix(matrix2);
+                        }
+
+                        for(int k = 1; k < object.getMatrix().getNumRows(); k ++) {
+                            for(int j = 0; j < object.getMatrix().getNumCols(); j++) {
+
+                                if(!(properties.findMatch(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j)))) {
+                                    properties.insert(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j));
+                                }
+                            }
+                        }
+                    }
+                    object.setSpace(Space());
+                    object.setProperties(properties);
+
+                    this->insert(object);
+                }
+            }
+        }
+    }
+    if (!(head == nullptr)) {
+        curr = head;
+        do 
+        {
+            Space space2(curr->getSpace());
+            for(int spSz2 = 0; spSz2 < spaceSize; spSz2++) {
+                Matrix matrix2(space.getPos(spSz2).getMatrixWhereElementIs(curr->getName()));
+                if(matrix2.getNumRows() > 1){
+                    matrix2.setPosition(Position(0,0,spSz2));
+                    space2.insert(matrix2);
+                    curr->addProperty(Element("Found In"), matrix2.getName()); 
+                }
+            }
+            if(curr->getMatrix().getNumRows() == 2) {
+                curr->setMatrix(Matrix(1,1));
+            }
+            curr->setSpace(space2);
+	    	curr = curr->getNext();
+        } while(curr != head);
+    }
+}
+
+void Objects::importAllObjects_i(const Space & space)
+{
+    int spaceSize = space.size();
+    if(spaceSize == 0) { return; }
+    
+    Positions positions;
+
+    for(int spSz = 0; spSz < spaceSize; spSz++) {
+        
+        Matrix matrix(space.getPos(spSz));
+
+        for(int i = 1; i < matrix.getNumRows(); i++) {
+
+            for(int col = 0; col < matrix.getNumCols(); col++) {
+
+                bool foundObj = false;
+                
+                Object object(matrix.getValue(i, col));
+                
+                curr = head;
+                if (!(head == nullptr)) {
+                    do 
+                    {
+                        if(curr->getName() == object.getName()) {
+                            foundObj = true;
+                            break;
+                        }
+	                	curr = curr->getNext();
+                    } while(curr != head);
+                }
+
+                if(foundObj == false) {
+                   
+                    Properties properties;
+                    
+                    for(int spSz2 = 0; spSz2 < spaceSize; spSz2++) {
+                        Matrix matrix2(space.getPos(spSz2).getMatrixWhereElementLike_i(matrix.getValue(i, col)));
+
+                        if(matrix2.getNumRows() > 1){
+                            object.setMatrix(matrix2);
+                        }
+
+                        for(int k = 1; k < object.getMatrix().getNumRows(); k ++) {
+                            for(int j = 0; j < object.getMatrix().getNumCols(); j++) {
+
+                                if(!(properties.findMatch(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j)))) {
+                                    properties.insert(object.getMatrix().getValue(0,j), object.getMatrix().getValue(k, j));
+                                }
+                            }
+                        }
+                    }
+                    object.setSpace(Space());
+                    object.setProperties(properties);
+
+                    this->insert(object);
+                }
+            }
+        }
+    }
+    if (!(head == nullptr)) {
+        curr = head;
+        do 
+        {
+            Space space2(curr->getSpace());
+            for(int spSz2 = 0; spSz2 < spaceSize; spSz2++) {
+                Matrix matrix2(space.getPos(spSz2).getMatrixWhereElementLike_i(curr->getName()));
+                if(matrix2.getNumRows() > 1){
+                    matrix2.setPosition(Position(0,0,spSz2));
+                    space2.insert(matrix2);
+                    curr->addProperty(Element("Found In"), matrix2.getName()); 
+                }
+            }
+            if(curr->getMatrix().getNumRows() == 2) {
+                curr->setMatrix(Matrix(1,1));
+            }
+            curr->setSpace(space2);
+	    	curr = curr->getNext();
+        } while(curr != head);
+    }
+}
+
 
 void Objects::importCSVs(const List & list_c)
 {
@@ -540,13 +721,14 @@ void Objects::importCSVs(const List & list_c)
         }
     }
     if(allCSVs.size() > 0) {
-
         Object allFiles("All CSVs");                              // Create an Object with the name All CSVs
         allFiles.setSpace(allCSVs);                               // Set the Object's space to that of All CSVs
         this->insert(allFiles);                                   // Insert the object of All CSVs into the main list of objects
-        this->importObjects(allCSVs);                             // Import All CSVs main values into individual objects and attach them to the main list of objects
+        this->importAllObjects_i(allCSVs);                        // Import All CSVs main values into individual objects and attach them to the main list of objects
     }
 }
+
+
 
 void Objects::importCSVs(const List & list_c, const List & propertyNames)
 {
@@ -575,6 +757,539 @@ void Objects::importCSVs(const List & list_c, const List & propertyNames)
     }
 }
 
+
+void Objects::getDeets() 
+{
+    if(head == nullptr){return;}
+
+    Properties foundIn;
+    
+ 
+
+
+
+
+
+    std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
+
+
+
+    // Get unique property valies for Found In
+    List list(this->getListOfPropertyValues("Found In"));
+
+
+    this->getObjectsFoundIn(list).print();
+    std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
+
+
+    std::cout << "Total Objects: "<< this->size() << std::endl;
+    std::cout << "Total Data Sources: "<< list.size() << std::endl;
+    std::cout << "Data Sources: "<< list << std::endl;
+
+    for(int i = list.size(); i >= 0; i--) {
+        
+        std::cout << "Total Objects Found in " << i << " Data Sources: "<< this->getObjectsFound(i).size() << std::endl;
+    }
+
+    
+    //list.print();
+
+    for(int i = 0; i < list.size(); i++) {
+        Objects objectsFoundIn(this->getObjectsFoundIn(list.getDataAtPosition(i)));
+        Objects objectsNotFoundIn(this->getObjectsNotFoundIn(list.getDataAtPosition(i)));
+
+        std::cout << "\nTotal Objects in     '"<< list.getDataAtPosition(i) << "': "<< objectsFoundIn.size() << std::endl;
+        std::cout << "Total Objects Not in '"<< list.getDataAtPosition(i) << "': "<< objectsNotFoundIn.size() << std::endl;
+    
+        for(int j = 0; j < list.size(); j++) {
+            if(j != i) {
+                std::cout << "Total Objects from'"<< list.getDataAtPosition(i) << "', in '"<< list.getDataAtPosition(j) << "': "<< objectsFoundIn.getObjectsFoundIn(list.getDataAtPosition(j)).size() << std::endl;
+            //std::cout << "Total Objects in '"<< list.getDataAtPosition(i) << "', also in '"<< list.getDataAtPosition(j) << "': "<< objectsFoundIn.getObjectsFoundIn(list.getDataAtPosition(j)).size() << std::endl;
+            }
+        }
+
+    }
+}
+
+
+Objects Objects::where(const Element & memberVar, const Element & verb, const Element & valueToSearchBy) 
+{
+    Objects objects;
+
+    if(head == nullptr){return objects;}
+
+    curr = head;
+
+    if(strcmp_i(memberVar.getData(), Element("name").getData()) == 0) {
+        if(strcmp_i(verb.getData(), Element("is").getData()) == 0) {
+            do 
+            {   
+	            if(curr->getName() == valueToSearchBy) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+       else if(strcmp_i(verb.getData(), Element("contains").getData()) == 0) {
+            do 
+            {   
+                List list(curr->getName());
+	            if(list.containsSequence_i(valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("like").getData()) == 0) {
+            do 
+            {   
+                List list(curr->getName());
+	            if(list.wildcardSearch_i(valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("not").getData()) == 0) {
+            do 
+            {   
+                List list(curr->getName());
+	            if(!(list.wildcardSearch_i(valueToSearchBy))) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("in").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().wildcardSearch_i(valueToSearchBy, curr->getName())) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+    }
+    else if(strcmp_i(memberVar.getData(), Element("space").getData()) == 0) {
+        if(strcmp_i(verb.getData(), Element("is").getData()) == 0) {
+            do 
+            {   
+                for(int i = 0; i < curr->getSpace().size(); i++) {
+	                if(strcmp_i(curr->getSpace().getPos(i).getName().getData(), valueToSearchBy.getData()) == 0) {
+                        objects.insert(*curr);
+                        break;
+                    }
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+       else if(strcmp_i(verb.getData(), Element("contains").getData()) == 0) {
+            do 
+            {  
+                for(int i = 0; i < curr->getSpace().size(); i++)
+                {
+                    List * list = curr->getSpace().getPos(i).getRows();
+	                for(int i = 0; i < curr->getSpace().getPos(i).getNumRows(); i++)
+                    {
+                        if(list[i].containsSequence_i(valueToSearchBy)) {
+                            objects.insert(*curr);
+                            break;
+                        }
+                    }
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("like").getData()) == 0) {
+            do 
+            {   
+                for(int i = 0; i < curr->getSpace().size(); i++)
+                {
+                    List * list = curr->getSpace().getPos(i).getRows();
+	                for(int i = 0; i < curr->getSpace().getPos(i).getNumRows(); i++)
+                    {
+                        if(list[i].wildcardSearch_i(valueToSearchBy)) {
+                            objects.insert(*curr);
+                            break;
+                        }
+                    }
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+    }
+    else if(strcmp_i(memberVar.getData(), Element("matrix").getData()) == 0) {
+        if(strcmp_i(verb.getData(), Element("is").getData()) == 0) {
+            do 
+            {   
+	            if(strcmp_i(curr->getMatrix().getName().getData(), valueToSearchBy.getData()) == 0) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+       else if(strcmp_i(verb.getData(), Element("contains").getData()) == 0) {
+            do 
+            {  
+                List * list = curr->getMatrix().getRows();
+	            for(int i = 0; i < curr->getMatrix().getNumRows(); i++)
+                {
+                    if(list[i].containsSequence_i(valueToSearchBy)) {
+                        objects.insert(*curr);
+                        break;
+                    }
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("like").getData()) == 0) {
+            do 
+            {   
+                List * list = curr->getMatrix().getRows();
+	            for(int i = 0; i < curr->getMatrix().getNumRows(); i++)
+                {
+                    if(list[i].wildcardSearch_i(valueToSearchBy)) {
+                        objects.insert(*curr);
+                        break;
+                    }
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+    }
+    else if(strcmp_i(memberVar.getData(), Element("property").getData()) == 0) {
+        if(strcmp_i(verb.getData(), Element("is").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().findMatch(valueToSearchBy).size() > 0) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+       else if(strcmp_i(verb.getData(), Element("contains").getData()) == 0) {
+            do 
+            {  
+                if(curr->getProperties().containsSequence_i(valueToSearchBy).size() > 0) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("like").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().wildcardSearch_i(valueToSearchBy).size() > 0) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("not").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().wildcardSearch_i(valueToSearchBy).size() == 0) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("exists").getData()) == 0) {
+            do 
+            {  
+                if(curr->getProperties().findKey(valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+    }
+    else if(this->getListOfPropertyKeys().findMatch_i(memberVar)) {
+        if(strcmp_i(verb.getData(), Element("is").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().findMatch(memberVar, valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+       else if(strcmp_i(verb.getData(), Element("contains").getData()) == 0) {
+            do 
+            {  
+                if(curr->getProperties().containsSequence_i(memberVar, valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("like").getData()) == 0) {
+            do 
+            {   
+                if(curr->getProperties().wildcardSearch_i(memberVar, valueToSearchBy)) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+        else if(strcmp_i(verb.getData(), Element("not").getData()) == 0) {
+            do 
+            {   
+                if(!(curr->getProperties().wildcardSearch_i(memberVar, valueToSearchBy))) {
+                    objects.insert(*curr);
+                }
+                curr = curr->getNext();
+            } while(curr != head);
+        }
+    }
+    //else{std::cout<<"Cannot search for object where: '" << memberVar << " " << verb << " " << valueToSearchBy << "'" << std::endl;}
+
+    return objects;
+}
+
+List Objects::getSignificantPropertyKeys() 
+{
+    List list;
+
+    if(head == nullptr){return list;}
+
+    curr = head;
+
+    do
+    {
+        Properties properties(curr->getProperties().findMatch_i(curr->getName()));
+
+        if(properties.size() > 1 )
+        {
+            for(int i = 0; i < properties.size(); i++)
+            {
+                list.insert(properties.getProperty(i).getKey());
+            }
+        }
+
+        curr = curr->getNext();
+    } while(curr != head);
+
+    // if list is empty, then there was a 1:1 ratio in property key names with all objects
+    //  No objects containing Key: Value pairs had object name match property key value to other property key same value
+    //  How to determine significant properties in 1:1 property keys where all keys of other objects are the same
+
+    return list;
+}
+
+
+
+Object Objects::getObject(int pos)
+{
+    if(head == nullptr){return Object();}
+    
+    int position = 0;
+
+    curr = head;
+
+    do
+    {   if(position == pos) {
+            return *curr;
+        }
+        position++;
+        curr = curr->getNext();
+    } while(curr != head);
+
+    return Object();
+}
+
+
+//void Objects::consolidateBySignificantPropertyKeys()
+//{
+//    
+//    List list(this->getSignificantPropertyKeys());
+//
+//
+//    Objects consolidated;
+//    
+//    for(int i = 0; i < list.size(); i++)
+//    {
+//        Objects objects(this->where("name", "in", list.getDataAtPosition(i)));        
+//       
+//        
+//    }
+//
+//
+//}
+
+
+Objects Objects::consolidatedBySignificantPropertyKeys() 
+{
+    
+    List list(this->getSignificantPropertyKeys());
+
+
+    Objects consolidated;
+    
+    for(int i = 0; i < list.size(); i++)
+    {
+        Objects objects(this->where("name", "in", list.getDataAtPosition(i)));        
+      
+        for(int i = 0; i < objects.size(); i++) {
+
+            Object object(objects.getObject(i));
+
+            consolidated.insert(object);
+        }
+    }
+
+    return consolidated;
+}
+
+
+Objects Objects::getObjectsFound(int numberOfTimesFound) 
+{
+
+    Objects objectsFoundNumberOfTimes;
+
+    if(head == nullptr){return objectsFoundNumberOfTimes;}
+
+    curr = head;
+
+    do 
+    {   
+	    if(curr->getProperties().getProperty(Element("Found In")).getValue().size() == numberOfTimesFound) {
+
+            //std::cout<<curr->getProperties().getProperty(Element("Found In")).getValue().size()<<std::endl;
+            //std::cout<<curr->getProperties().getProperty(Element("Found In")).getValue()<<std::endl;
+            objectsFoundNumberOfTimes.insert(*curr);
+        }
+
+        curr = curr->getNext();
+    } while(curr != head);
+
+    return objectsFoundNumberOfTimes;
+}
+
+Objects Objects::getObjectsFoundIn(const List & list) 
+{
+
+    Objects objectsFoundInAllListValues;
+
+    if(head == nullptr){return objectsFoundInAllListValues;}
+
+
+    curr = head;
+
+    do 
+    {   
+        bool foundObjectInAllListValues = true;
+
+        for(int j = 0; j < list.size(); j++) {
+	        if(curr->getProperties().findMatch(Element("Found In"), list.getDataAtPosition(j))) {
+            }
+            else{foundObjectInAllListValues = false;}
+        }
+        if(foundObjectInAllListValues == true) {
+            objectsFoundInAllListValues.insert(*curr);
+        }
+
+        curr = curr->getNext();
+    } while(curr != head);
+
+    return objectsFoundInAllListValues;
+}
+
+Objects Objects::getObjectsFoundIn(const Element & fileName) 
+{
+
+    Objects objectsFoundInFile;
+
+    if(head == nullptr){return objectsFoundInFile;}
+
+    curr = head;
+
+    do 
+    {
+	    if(curr->getProperties().findMatch(Element("Found In"), fileName)) {
+            objectsFoundInFile.insert(*curr);
+        }
+
+        curr = curr->getNext();
+    } while(curr != head);
+
+    return objectsFoundInFile;
+}
+
+Objects Objects::getObjectsNotFoundIn(const Element & fileName) 
+{
+    Objects objectsNotFoundInFile;
+
+    if(head == nullptr){return objectsNotFoundInFile;}
+
+    curr = head;
+
+    do 
+    {
+	    if(!(curr->getProperties().findMatch(Element("Found In"), fileName))) {
+            objectsNotFoundInFile.insert(*curr);
+        }
+
+        curr = curr->getNext();
+    } while(curr != head);
+
+    return objectsNotFoundInFile;
+}
+
+List Objects::getListOfPropertyValues(const Element & key)
+{
+    List list;
+    if(head == nullptr){return list;}
+
+    do 
+    {
+        String string(curr->getProperties().getProperty(key).getValue());
+
+        for(int i = 0; i < string.size(); i++) {
+            list.insert(string.getDataAtPosition(i));
+        }
+        curr = curr->getNext();
+    } while(curr != head);
+    return list;
+}
+List Objects::getListOfPropertyValues()
+{
+    List list;
+    if(head == nullptr){return list;}
+
+    do 
+    {
+        Properties properties(curr->getProperties());
+
+        for(int i = 0; i < properties.size(); i++) {
+            String string(properties.getProperty(i).getValue());
+            
+            for(int i = 0; i < string.size(); i++) {
+                list.insert(string.getDataAtPosition(i));
+            }
+        }
+        curr = curr->getNext();
+    } while(curr != head);
+    return list;
+}
+List Objects::getListOfPropertyKeys()
+{
+    List list;
+    if(head == nullptr){return list;}
+
+    do 
+    {
+        Properties properties(curr->getProperties().getKeys());
+        
+        for(int i = 0; i < properties.size(); i++) {
+            list.insert(properties.getProperty(i).getKey());
+        }
+        curr = curr->getNext();
+    } while(curr != head);
+    return list;
+}
+
+
 /* This function prints the Objects to standard out
  * 
  * Function: print
@@ -590,19 +1305,10 @@ void Objects::print()
     
     curr = head;
     int count        = 0;
-    //int indexSize    = 1;
-    //int maxIndexSize = static_cast<int>(log10(abs(size()))) + 2;
     std::cout << "--------------------------------------*BEGIN OBJECTS*--------------------------------------" << std::endl;
     do 
     {
-        //if (count != 0) indexSize = static_cast<int>(log10(abs(count))) + 1;
         std::cout << "\n---" << std::endl;
-        //std::cout << "--" << std::endl;
-        //std::cout << "-" << std::endl;
-        //std::cout << std::left;
-        //std::cout << "idx:(" << count << ")";
-        //std::cout << std::setw((maxIndexSize - indexSize)) << " ";
-        //std::cout << "-Data: "<< curr->getName()          << std::endl;
         curr->print();
 		curr = curr->getNext();
         count++;
@@ -640,19 +1346,11 @@ int Objects::sizeOfLargestObject() const
 //
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^---------------------------------------------------------------------------
 
-/* This function copies the contents of one Objects to another Objects. COPY assignment operator
- * 
- * Operator: =
- * Param:  const Objects & other, The objects to be copied FROM
- * return: Objects &,             The objects to be copied to
- * e.g. 
- *  objects1 = objects2
- */
 Objects & Objects::operator=(const Objects &other)  
 {
     //std::cout << "copy assignment called" << std::endl;
     if (this != &other) {
-        this->clear();                                 // Clear the current objects
+        this->clear();                                // Clear the current objects
         Object *otherCurr = other.head;               // Copy objects from the other objects
         if(otherCurr != nullptr) {
             do 
@@ -665,16 +1363,6 @@ Objects & Objects::operator=(const Objects &other)
     return *this;
 }
 
-/* This operator moves the contents of one Objects to another Objects. MOVE assignment operator
- * This operation moves the ownership of memory of the data to this Objects from other Objects.
- * Results in the other objects being cleared 
- *
- * Operator: =
- * Param:  const Objects && other, The objects to be moved FROM
- * return: Objects &,              The objects to be moved to
- * e.g. 
- *  objects1 = std::move(objects2)
- */
 Objects & Objects::operator=(Objects &&other)  
 {
     std::cout << "move assignment called" << std::endl;
@@ -688,39 +1376,21 @@ Objects & Objects::operator=(Objects &&other)
     return *this;
 }
 
-/* This operator adds one objects to another objects and returns a new objects
- * Addition Operator
- *
- * Operator: +
- * Param:  const Objects && other, The objects to be added from
- * return: Objects &,              The objects to be added to
- * e.g. 
- *  objects1 = objects2 + objects3 + objects4 + objects5
- */
 Objects Objects::operator+(const Objects &other) const 
 {
-    Objects newObjects(*this);                   // Create a new objects by copying the current objects 
-    Object *otherCurr = other.head;       // Initialize otherCurr to the head of the other objects 
+    Objects newObjects(*this);             // Create a new objects by copying the current objects 
+    Object *otherCurr = other.head;        // Initialize otherCurr to the head of the other objects 
     if (otherCurr != nullptr) {            // Traverse the circular linked objects
         do 
         {   // Create a new Object object with the same data as otherCurr
             Object *newObject = new Object(*otherCurr);
             newObjects.insert(newObject);     // Insert the new Object into the new objects
             otherCurr = otherCurr->getNext();
-        } while (otherCurr != other.head); // Loop until we reach the head again
+        } while (otherCurr != other.head);    // Loop until we reach the head again
     }
     return newObjects;                        // Return the new objects with concatenated objects
 }    
 
-/* This operator compares equality of Objectss
- * Equality operator
- *
- * Operator: ==
- * Param:  const Objects & other, rvalue
- * return: bool
- * e.g. 
- *  objects1 == objects2
- */
 bool Objects::operator==(const Objects &other) const  
 {
     if (this == &other)                    // Check if it's the same object
@@ -752,18 +1422,9 @@ bool Objects::operator==(const Objects &other) const
          } while (thisCurr != head && otherCurr != other.head);
     }
 
-    return true;                           // Objects are equal if both objects complete a full loop
+    return true;                           // Objectss are equal if both objectss complete a full loop
 }
 
-/* This operator compares inequality of Objectss
- * inequality operator -> delegates to equality operator
- *
- * Operator: !=
- * Param:  const Objects & other, rvalue
- * return: bool
- * e.g. 
- *  objects1 != objects2
- */
 bool Objects::operator!=(const Objects &other) const 
 {
     return !(*this == other);
